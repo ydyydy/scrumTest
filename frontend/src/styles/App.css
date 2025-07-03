@@ -1,0 +1,16 @@
+.backgroudColor {
+  /*background-color: #06034d;*/
+  background-color: #bd2a33;
+}
+
+.btn-scrum {
+  background-color: #bd2a33;
+  border-color: #bd2a33;
+  color: white;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-scrum:hover {
+  background-color: #d9484e; /* rojo más claro */
+  border-color: #d9484e;
+}

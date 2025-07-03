@@ -5,12 +5,15 @@ export class User {
   @PrimaryColumn('uuid')
   id: string;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
   @Column({ unique: true })
   email: string;
+
+  @Column()
+  password: string;
+
+  @Column()
+  username: string;
+
+  @Column({ type: 'boolean', default: false })
+  isAdmin: boolean;
 }
