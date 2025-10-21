@@ -24,7 +24,6 @@ export abstract class EntityRoot<T> {
       return false;
     }
 
-    // eslint-disable-next-line no-underscore-dangle
     return this._id.equals(object._id);
   }
 

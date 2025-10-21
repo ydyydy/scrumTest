@@ -48,5 +48,6 @@ module.exports = {
     'class-methods-use-this': 'off', // Disable the rule for class methods
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'import/no-relative-packages': 'error',
+    'no-underscore-dangle': 'off', // Allow dangling underscores in identifiers
   },
 };

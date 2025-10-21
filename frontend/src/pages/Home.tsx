@@ -5,7 +5,7 @@ import scrumImage from "../assets/images/scrum_home.png";
 
 export function Home() {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="d-flex flex-column min-vh-80">
       {/* MAIN CONTENT */}
       <Container className="flex-grow-1 d-flex flex-column justify-content-center align-items-center">
         <Row className="align-items-center">

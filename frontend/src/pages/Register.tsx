@@ -19,9 +19,6 @@ export function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Nombre de usuario:", username);
-    console.log("Password:", password);
   };
 
   const handleBackToLogin = () => {
@@ -42,7 +39,7 @@ export function Register() {
               <Form onSubmit={handleSubmit}>
                 <FloatingLabel
                   controlId="registerEmail"
-                  label="Correo Electrónico"
+                  label="Correo electrónico"
                   className="mb-3"
                 >
                   <Form.Control
@@ -51,14 +48,14 @@ export function Register() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    placeholder="Correo Electrónico"
+                    placeholder="Correo electrónico"
                     autoComplete="email"
                   />
                 </FloatingLabel>
 
                 <FloatingLabel
                   controlId="registerUsername"
-                  label="Nombre de Usuario"
+                  label="Nombre de usuario"
                   className="mb-3"
                 >
                   <Form.Control
@@ -66,7 +63,7 @@ export function Register() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    placeholder="Nombre de Usuario"
+                    placeholder="Nombre de usuario"
                     autoComplete="username"
                   />
                 </FloatingLabel>
