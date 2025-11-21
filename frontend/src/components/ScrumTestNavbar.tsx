@@ -1,47 +1,48 @@
-import { Container, Navbar, Nav, Button } from "react-bootstrap";
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { Link, NavLink } from "react-router-dom";
 import logo from "../assets/images/logo_navbar.png";
-import { Link } from "react-router-dom";
 
-export const ScrumTestNavbar = () => {
+export function SolidarianNavbar() {
   return (
-    <Navbar className="backgroudColor" variant="dark" expand="lg">
+    <Navbar bg="primary" variant="dark" expand="lg" className="shadow-sm">
       <Container>
-        <Navbar.Brand as={Link} to="/">
+        {/* Logo */}
+        <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
           <img
             src={logo}
-            alt="ScrumTest Logo"
-            width="30"
-            height="30"
+            alt="Solidarian Logo"
+            width="32"
+            height="32"
             className="d-inline-block align-top me-2"
           />
-          ScrumTest
+          SolidarianID
         </Navbar.Brand>
 
-        {/* Hamburger Menu Toggle */}
+        {/* Botón hamburguesa */}
         <Navbar.Toggle aria-controls="navbar-nav" />
 
-        {/* Navbar Collapse */}
+        {/* Enlaces */}
         <Navbar.Collapse id="navbar-nav">
           <Nav className="ms-auto">
-            <Button
-              as={Link}
+            <Nav.Link
+              as={NavLink}
               to="/login"
-              variant="light"
-              className="me-2 transition-all duration-300 ease-in-out transform hover:bg-gray-200"
+              className="text-light mx-2"
+              style={{ padding: "0.5rem 1rem" }}
             >
-              Iniciar Sesión
-            </Button>
-            <Button
-              as={Link}
+              Login
+            </Nav.Link>
+            <Nav.Link
+              as={NavLink}
               to="/register"
-              variant="outline-light"
-              className="transition-all duration-300 ease-in-out transform hover:bg-gray-200"
+              className="text-light mx-2"
+              style={{ padding: "0.5rem 1rem" }}
             >
-              Registrarse
-            </Button>
+              Register
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
   );
-};
+}

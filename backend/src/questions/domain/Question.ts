@@ -5,6 +5,7 @@ import { Answer } from './Answer';
 export interface QuestionProps {
   text: string;
   answers: Answer[];
+  category: string;
 }
 
 export class Question extends EntityRoot<QuestionProps> {
@@ -26,6 +27,14 @@ export class Question extends EntityRoot<QuestionProps> {
 
   set answers(answers: Answer[]) {
     this.props.answers = answers;
+  }
+
+  get category(): string {
+    return this.props.category;
+  }
+
+  set category(category: string) {
+    this.props.category = category;
   }
 
   public static create(props: QuestionProps, id?: UniqueEntityID): Question {
@@ -52,6 +61,9 @@ export class Question extends EntityRoot<QuestionProps> {
       throw new Error('A question must have at least one correct answer');
     }
 
+    if (!props.category) {
+      throw new Error('A question must have a category');
+    }
     return new Question(props, id);
   }
 }

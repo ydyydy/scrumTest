@@ -1,7 +1,7 @@
-import { UniqueEntityID } from '../../common/core/UniqueEntityID';
+import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
 import { AnswerMapper } from './answer.mapper';
-import * as Domain from './domain';
-import * as Persistence from './infra/persistence';
+import * as Domain from '../domain';
+import * as Persistence from '../infra/persistence';
 
 export class QuestionMapper {
   static toDomain(
@@ -13,6 +13,7 @@ export class QuestionMapper {
       {
         text: raw.text,
         answers: domainAnswers,
+        category: raw.category,
       },
       new UniqueEntityID(raw.id),
     );
@@ -24,6 +25,7 @@ export class QuestionMapper {
     const entity = new Persistence.Question();
     entity.id = question.id.toString();
     entity.text = question.text;
+    entity.category = question.category;
 
     const answersEntities = question.answers.map((a) =>
       AnswerMapper.toPersistence(a),

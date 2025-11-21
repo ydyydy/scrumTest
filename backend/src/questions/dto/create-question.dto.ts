@@ -16,4 +16,7 @@ export class CreateQuestionDto {
   @ArrayMinSize(4, { message: 'A question must have exactly 4 answers' })
   @ArrayMaxSize(4, { message: 'A question must have exactly 4 answers' })
   answers: AnswerDto[];
+
+  @IsString()
+  category: string;
 }

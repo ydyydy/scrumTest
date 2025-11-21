@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:3000/reviews
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJkMDM0OWQyNC00ZjFmLTQzZTAtODgwNi01MzQyZDY2MzE5MmMifSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzYzNjYzMDYzLCJleHAiOjE3NjM2NjY2NjN9.lI_mKID1Zhugf03o7yijPw0QiIZ07lObdqLcaQS7Qx8
+
+### Create Review Request
+POST {{baseUrl}}    
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "userId": "46f02f17-086d-46b3-8d15-8392bfd20131"
+}
+
+

@@ -1,6 +1,6 @@
-import { UniqueEntityID } from '../../common/core/UniqueEntityID';
-import * as Domain from './domain';
-import * as Persistence from './infra/persistence';
+import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
+import * as Domain from '../domain';
+import * as Persistence from '../infra/persistence';
 
 export class AnswerMapper {
   static toDomain(raw: Persistence.Answer): Domain.Answer {

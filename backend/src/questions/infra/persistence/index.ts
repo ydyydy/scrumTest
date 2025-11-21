@@ -1,5 +1,5 @@
 /**
- * @file This module exports the User persistence entity.
+ * @file This module exports the Question and Answer persistence entities.
  * @module modules/question/persistence
  */
 

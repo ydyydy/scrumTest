@@ -10,3 +10,14 @@ Content-Type: application/json
     "password": "Password1",
     "isAdmin": false
 }
+
+### Create admin user
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+    "username": "Admin",
+    "email": "admin@gmail.com",
+    "password": "Password1",
+    "isAdmin": true
+}

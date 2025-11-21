@@ -4,8 +4,8 @@ import { Repository as TypeOrmRepository } from 'typeorm/repository/Repository';
 import * as Persistence from './persistence';
 import * as Domain from '../domain';
 import { QuestionRepository } from '../question.repository';
-import { QuestionMapper } from '../question.mapper';
-import { AnswerMapper } from '../answer.mapper';
+import { QuestionMapper } from '../mappers/question.mapper';
+import { AnswerMapper } from '../mappers/answer.mapper';
 import { PaginationDefaults } from '../../../common/utils/enum';
 
 @Injectable()
@@ -26,6 +26,7 @@ export class QuestionRepositoryTypeOrm extends QuestionRepository {
     await this.questionRepository.save({
       id: questionEntity.id,
       text: questionEntity.text,
+      category: questionEntity.category,
     });
 
     // Guardar todas las respuestas asociadas
@@ -61,15 +62,33 @@ export class QuestionRepositoryTypeOrm extends QuestionRepository {
   async findQuestions(
     page: number = PaginationDefaults.DEFAULT_PAGE,
     limit: number = PaginationDefaults.DEFAULT_LIMIT,
-  ): Promise<Domain.Question[]> {
-    // Traer preguntas con paginación
-    const questions = await this.questionRepository.find({
+  ): Promise<[Domain.Question[], number]> {
+    // Obtener preguntas paginadas
+    const [questions, total] = await this.questionRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },
     });
 
-    // Traer respuestas de cada pregunta
+    // Para cada pregunta, traer sus respuestas
+    const questionsWithAnswers = await Promise.all(
+      questions.map(async (q) => {
+        const answers = await this.answerRepository.findBy({
+          questionId: q.id,
+        });
+        return QuestionMapper.toDomain({ ...q, answers });
+      }),
+    );
+    return [questionsWithAnswers, total];
+  }
+
+  async findAllQuestionsWithAnswers(): Promise<Domain.Question[]> {
+    // 1. Traer todas las preguntas
+    const questions = await this.questionRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+
+    // 2. Para cada pregunta, traer sus respuestas
     const questionsWithAnswers = await Promise.all(
       questions.map(async (q) => {
         const answers = await this.answerRepository.findBy({

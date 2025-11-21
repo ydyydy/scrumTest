@@ -35,11 +35,12 @@ export class QuestionServiceImpl implements QuestionService {
       {
         text: dto.text,
         answers,
+        category: dto.category,
       },
       realQuestionId,
     );
 
-    // 4️⃣ Guardar en repositorio
+    // Guardar en repositorio
     await this.questionRepository.save(question);
 
     return question;
@@ -50,9 +51,12 @@ export class QuestionServiceImpl implements QuestionService {
     await this.questionRepository.delete(id);
   }
 
-  async findAll(page?: number, limit?: number): Promise<Question[]> {
-    const questions = await this.questionRepository.findQuestions(page, limit);
-    return questions;
+  async findAll(page?: number, limit?: number): Promise<[Question[], number]> {
+    const [questions, total] = await this.questionRepository.findQuestions(
+      page,
+      limit,
+    );
+    return [questions, total];
   }
 
   async findById(id: string): Promise<Question> {

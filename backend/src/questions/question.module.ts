@@ -21,6 +21,6 @@ import { QuestionRepositoryTypeOrm } from './infra/question.repository.typeorm';
       useClass: QuestionRepositoryTypeOrm,
     },
   ],
-  exports: [QuestionRepositoryTypeOrm],
+  exports: [QuestionService, QuestionRepository],
 })
-export class QuestionModule {}
+export class QuestionsModule {}
