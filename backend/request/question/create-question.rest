@@ -6,15 +6,32 @@ Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
 {
-  "text": "What is the capital of France?",
-  "answers": [
-    { "text": "Berlin", "isCorrect": false },
-    { "text": "Madrid", "isCorrect": false },
-    { "text": "Paris", "isCorrect": true },
-    { "text": "Rome", "isCorrect": false }
-  ],
-  "category": "1"
+    "text": "¿Qué se define en la reunión de Planificación del Sprint?",
+    "answers": [
+      { "text": "El objetivo y trabajo del Sprint", "isCorrect": true },
+      { "text": "Las vacaciones del equipo", "isCorrect": false },
+      { "text": "El presupuesto del proyecto", "isCorrect": false },
+      { "text": "La estrategia de la empresa", "isCorrect": false }
+    ],
+    "category": "4",
+    "questionType": "single"
+  }
 
+### Create another question (admin only)
+POST {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+    "text": "¿Qué son los sistemas Andon?",
+    "answers": [
+      { "text": "Sistemas de control visual con luces", "isCorrect": true },
+      { "text": "Sistemas de estimación ágil", "isCorrect": true },
+      { "text": "Sistemas de gestión de proyectos", "isCorrect": false },
+      { "text": "Sistemas de pruebas automáticas", "isCorrect": false }
+    ],
+    "category": "6",
+    "questionType": "multiple"
 }
 
 ### Create another question (admin only)
@@ -23,11 +40,13 @@ Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
 {
-  "text": "What is 2 + 2?",
-  "answers": [
-    { "text": "3", "isCorrect": false },
-    { "text": "4", "isCorrect": false },
-    { "text": "5", "isCorrect": false },
-    { "text": "22", "isCorrect": false }
-  ]
-}
+    "text": "¿Qué diferencia la gestión predictiva de la ágil?",
+    "answers": [
+      { "text": "Enfoque en plan vs enfoque en adaptación", "isCorrect": true },
+      { "text": "Uso de herramientas diferentes", "isCorrect": false },
+      { "text": "Duración de los proyectos", "isCorrect": false },
+      { "text": "Número de personas en el equipo", "isCorrect": false }
+    ],
+    "category": "1",
+    "questionType": "single"
+  }

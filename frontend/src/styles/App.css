@@ -1,6 +1,11 @@
 .backgroudColor {
-  /*background-color: #06034d;*/
   background-color: #bd2a33;
+}
+
+.global-background {
+  background-color: #e9ebee;
+  min-height: 100vh;
+  padding: 2rem;
 }
 
 .btn-scrum {

@@ -8,21 +8,46 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { registerUser } from "../services/user.service";
+import { useNavigate } from "react-router";
+import { MessageBox } from "../components/MessageBox";
 
 export function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [errorCount, setErrorCount] = useState(0);
 
+  const navigate = useNavigate();
   const emailRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
+    try {
+      await registerUser({ email, username, password });
+      setSuccess(true);
+      setMessage("Registro exitoso. Redirigiendo al inicio de sesión...");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Error during registration"
+      );
+      setSuccess(false);
+      setErrorCount((prev) => prev + 1);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackToLogin = () => {
-    console.log("Volver a iniciar sesión");
+    navigate("/login");
   };
 
   return (
@@ -30,11 +55,21 @@ export function Register() {
       <Row className="justify-content-center">
         <Col xs={12} md={6} lg={5}>
           <Card
-            style={{ borderColor: "#ced4da" }}
+            style={{ borderColor: "#8a94a0ff" }}
             className="shadow-sm"
             bg="light"
           >
             <Card.Body>
+              {/* Mensaje de éxito o error */}
+              {message && (
+                <MessageBox
+                  key={errorCount}
+                  message={message}
+                  success={success}
+                  duration={4000}
+                />
+              )}
+
               <h2 className="text-center mb-4">Registrarse</h2>
               <Form onSubmit={handleSubmit}>
                 <FloatingLabel
@@ -89,8 +124,6 @@ export function Register() {
                   </Button>
 
                   <Button
-                    as={Link}
-                    to="/login"
                     variant="outline-danger"
                     type="button"
                     onClick={handleBackToLogin}
@@ -99,6 +132,15 @@ export function Register() {
                   </Button>
                 </div>
               </Form>
+
+              {/* Loading Spinner */}
+              {loading && (
+                <div className="d-flex justify-content-center my-3">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                  </div>
+                </div>
+              )}
             </Card.Body>
           </Card>
         </Col>

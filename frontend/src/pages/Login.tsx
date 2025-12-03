@@ -8,21 +8,48 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/user.service";
+import { MessageBox } from "../components/MessageBox";
+import { useAuth } from "../context/AuthContext";
 
 export function Login() {
+  const navigate = useNavigate();
+  const emailRef = useRef(null);
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const emailRef = useRef(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [errorCount, setErrorCount] = useState(0);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    setLoading(true);
+
+    try {
+      const data = await loginUser(email, password);
+      setSuccess(true);
+      // Guardar sesión en AuthContext y localStorage
+      login(data);
+      navigate("/home");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Error durante el inicio de sesión"
+      );
+      setSuccess(false);
+      setErrorCount((prev) => prev + 1);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRegister = () => {
-    console.log("Redirigir a registro");
+    navigate("/register");
   };
 
   return (
@@ -30,11 +57,20 @@ export function Login() {
       <Row className="justify-content-center">
         <Col xs={12} md={6} lg={5}>
           <Card
-            style={{ borderColor: "#ced4da" }}
+            style={{ borderColor: "#8a94a0ff" }}
             className="shadow-sm"
             bg="light"
           >
             <Card.Body>
+              {/* Mensaje de éxito o error */}
+              {message && (
+                <MessageBox
+                  key={errorCount}
+                  message={message}
+                  success={success}
+                  duration={3000}
+                />
+              )}
               <h2 className="text-center mb-4">Iniciar Sesión</h2>
               <Form onSubmit={handleSubmit}>
                 <FloatingLabel
@@ -74,8 +110,6 @@ export function Login() {
                   </Button>
 
                   <Button
-                    as={Link}
-                    to="/register"
                     variant="outline-danger"
                     type="button"
                     onClick={handleRegister}
@@ -84,6 +118,14 @@ export function Login() {
                   </Button>
                 </div>
               </Form>
+              {/* Loading Spinner */}
+              {loading && (
+                <div className="d-flex justify-content-center my-3">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                  </div>
+                </div>
+              )}
             </Card.Body>
           </Card>
         </Col>

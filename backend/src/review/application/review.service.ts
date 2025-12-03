@@ -1,5 +1,7 @@
 import { Review } from '../domain';
+import { AnswerQuestionDto } from '../dto/answer-question.dto';
 import { CreateReviewDto } from '../dto/create-review.dto';
+import { SubmitReviewAnswerDto } from '../dto/submit-review-answer.dto';
 import { UpdateReviewDto } from '../dto/update-review.dto';
 
 export abstract class ReviewService {
@@ -7,7 +9,14 @@ export abstract class ReviewService {
 
   abstract findById(id: string): Promise<Review>;
 
-  abstract findByUser(userId: string): Promise<Review | null>;
+  abstract findByUser(userId: string): Promise<Review>;
 
   abstract update(id: string, dto: UpdateReviewDto): Promise<void>;
+
+  abstract answerQuestion(
+    reviewId: string,
+    dto: SubmitReviewAnswerDto,
+  ): Promise<AnswerQuestionDto>;
+
+  abstract resetReview(reviewId: string): Promise<void>;
 }

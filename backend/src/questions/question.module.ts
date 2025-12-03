@@ -7,9 +7,10 @@ import { QuestionService } from './application/question.service';
 import { QuestionController } from './application/question.controller';
 import { QuestionServiceImpl } from './application/question.service.impl';
 import { QuestionRepositoryTypeOrm } from './infra/question.repository.typeorm';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Question, Answer])],
+  imports: [TypeOrmModule.forFeature([Question, Answer]), SharedModule],
   controllers: [QuestionController],
   providers: [
     {

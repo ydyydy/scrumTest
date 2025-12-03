@@ -28,11 +28,10 @@ export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Post()
-  //@Roles(Role.ADMIN)
-  //@UseGuards(RolesGuard)
-  @Public()
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   async create(@Body() dto: CreateQuestionDto, @Res() res: Response) {
-    const question = await this.questionService.create(dto, true);
+    const question = await this.questionService.create(dto);
     const locationUrl = `/questions/${question.id}`;
     res
       .status(HttpStatus.CREATED)
@@ -41,11 +40,10 @@ export class QuestionController {
   }
 
   @Delete(':id')
-  //@Roles(Role.ADMIN)
-  //@UseGuards(RolesGuard)
-  @Public()
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   async delete(@Param('id') id: string): Promise<void> {
-    return this.questionService.delete(id, true);
+    return this.questionService.delete(id);
   }
 
   @Get()

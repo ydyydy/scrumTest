@@ -1,0 +1,5 @@
+@baseUrl = http://localhost:3000/users
+@userId = 708a95c8-9f2b-4e83-9adf-7dd17fb2e21c
+### Find user by ID
+GET {{baseUrl}}/{{userId}}
+Content-Type: application/json

@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:3000/reviews
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJkMDM0OWQyNC00ZjFmLTQzZTAtODgwNi01MzQyZDY2MzE5MmMifSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzYzNjYzMDYzLCJleHAiOjE3NjM2NjY2NjN9.lI_mKID1Zhugf03o7yijPw0QiIZ07lObdqLcaQS7Qx8
+@reviewId = 44dfbcb3-67af-4eef-b8f1-60da682ad53e
+### Answer simple annswer question : result correct
+PATCH  {{baseUrl}}/{{reviewId}}/answer
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "questionId": "82342767-5a45-4cdc-b6e4-9a1d50aeeb29",
+    "userAnswerIds": ["e10f70ab-3288-4bb7-a937-e00b8ada2211"]
+}
+
+### Answer multiple answer question: result correct
+PATCH  {{baseUrl}}/{{reviewId}}/answer
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "questionId": "f0a085d7-144f-433c-a0ca-3b3371fef07e",
+    "userAnswerIds": [
+        "87169168-b0f2-4dc6-b02a-86401f83889a",
+        "57fe884f-e369-4d32-b53f-a9293d8e6327"
+    ]
+}
+
+### Answer single answer question: result incorrect
+PATCH {{baseUrl}}/{{reviewId}}/answer
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+    "questionId": "df48b2ee-3da8-4470-92e5-3bedf3ced2da",
+    "userAnswerIds": ["4ad18cab-6322-4ca5-a881-6bbab46acf11"]
+}

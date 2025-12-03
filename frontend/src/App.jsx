@@ -1,16 +1,16 @@
 import { ScrumTestNavbar } from "./components/ScrumTestNavbar";
 import { Footer } from "./components/Footer";
 import { AppRoutes } from "./router/AppRoutes";
-
+import { AuthProvider } from "./context/AuthContext";
 function App() {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <AuthProvider>
       <ScrumTestNavbar />
-      <div className="flex-grow-1">
+      <div className="global-background min-vh-80">
         <AppRoutes />
       </div>
       <Footer />
-    </div>
+    </AuthProvider>
   );
 }
 

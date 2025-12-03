@@ -6,6 +6,7 @@ export interface QuestionProps {
   text: string;
   answers: Answer[];
   category: string;
+  questionType: 'single' | 'multiple';
 }
 
 export class Question extends EntityRoot<QuestionProps> {
@@ -37,6 +38,14 @@ export class Question extends EntityRoot<QuestionProps> {
     this.props.category = category;
   }
 
+  get questionType(): 'single' | 'multiple' {
+    return this.props.questionType;
+  }
+
+  set questionType(questionType: 'single' | 'multiple') {
+    this.props.questionType = questionType;
+  }
+
   public static create(props: QuestionProps, id?: UniqueEntityID): Question {
     if (!props.text || !props.answers) {
       throw new Error('[Question] Missing properties.');
@@ -64,6 +73,11 @@ export class Question extends EntityRoot<QuestionProps> {
     if (!props.category) {
       throw new Error('A question must have a category');
     }
+
+    if (!props.questionType) {
+      throw new Error('A question must have a question type');
+    }
+
     return new Question(props, id);
   }
 }

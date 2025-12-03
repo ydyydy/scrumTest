@@ -6,10 +6,10 @@ import { ReviewController } from './application/review.controller';
 import { ReviewServiceImpl } from './application/review.service.impl';
 import { ReviewRepositoryTypeOrm } from './infra/review.repository.typeorm';
 import { Review } from './infra/persistence/review.entity';
-import { QuestionsModule } from '../questions/question.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Review]), QuestionsModule],
+  imports: [TypeOrmModule.forFeature([Review]), SharedModule],
   controllers: [ReviewController],
   providers: [
     {
@@ -21,6 +21,6 @@ import { QuestionsModule } from '../questions/question.module';
       useClass: ReviewRepositoryTypeOrm,
     },
   ],
-  exports: [ReviewService],
+  exports: [ReviewService, ReviewRepository],
 })
 export class ReviewModule {}

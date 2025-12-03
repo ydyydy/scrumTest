@@ -23,18 +23,31 @@ export class QuestionRepositoryTypeOrm extends QuestionRepository {
   async save(question: Domain.Question): Promise<Domain.Question> {
     // Guardar la pregunta
     const questionEntity = QuestionMapper.toPersistence(question);
-    await this.questionRepository.save({
-      id: questionEntity.id,
-      text: questionEntity.text,
-      category: questionEntity.category,
-    });
 
-    // Guardar todas las respuestas asociadas
-    const answersEntities = question.answers.map((a) =>
-      AnswerMapper.toPersistence(a),
-    );
+    try {
+      await this.questionRepository.save({
+        id: questionEntity.id,
+        text: questionEntity.text,
+        category: questionEntity.category,
+        questionType: questionEntity.questionType,
+      });
+    } catch (err) {
+      // Si falla la pregunta, no se guarda nada
+      throw new Error(`Failed to save question: ${err.message}`);
+    }
 
-    await this.answerRepository.save(answersEntities);
+    // Solo guardar respuestas si la pregunta se guardó correctamente
+    if (questionEntity.id) {
+      const answersEntities = question.answers.map((a) =>
+        AnswerMapper.toPersistence(a),
+      );
+      try {
+        await this.answerRepository.save(answersEntities);
+      } catch (err) {
+        // Aquí podrías intentar borrar la pregunta para dejar consistencia, o simplemente lanzar error
+        throw new Error(`Failed to save answers: ${err.message}`);
+      }
+    }
 
     return question;
   }

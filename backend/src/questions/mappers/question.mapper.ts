@@ -14,6 +14,7 @@ export class QuestionMapper {
         text: raw.text,
         answers: domainAnswers,
         category: raw.category,
+        questionType: raw.questionType,
       },
       new UniqueEntityID(raw.id),
     );
@@ -26,6 +27,7 @@ export class QuestionMapper {
     entity.id = question.id.toString();
     entity.text = question.text;
     entity.category = question.category;
+    entity.questionType = question.questionType;
 
     const answersEntities = question.answers.map((a) =>
       AnswerMapper.toPersistence(a),

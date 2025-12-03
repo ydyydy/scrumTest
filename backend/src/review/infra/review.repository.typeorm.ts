@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository as TypeOrmRepository } from 'typeorm/repository/Repository';
 import { ReviewRepository } from '../review.repository';
-import { Review } from '../domain';
 import * as Persistence from './persistence';
 import { ReviewMapper } from '../mappers/ReviewMapper';
 import * as Domain from '../domain';
@@ -18,7 +17,7 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
 
   /** Crear un nuevo review */
   async save(entity: Domain.Review): Promise<Domain.Review> {
-    const domainReview = Review.create({
+    const domainReview = Domain.Review.create({
       userId: entity.userId,
       startDate: new Date(),
       updatedAt: new Date(),
@@ -32,24 +31,22 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
   }
 
   /** Buscar review por usuario */
-  async findByUser(userId: string): Promise<Review | null> {
-    const raw = await this.reviewRepository.findOne({
-      where: { userId },
-    });
+  async findByUser(userId: string): Promise<Domain.Review> {
+    const raw = await this.reviewRepository.findOneBy({ userId });
 
-    if (!raw) return null;
+    if (!raw) throw new Error(`Review con userId ${userId} no encontrado`);
 
     return ReviewMapper.toDomain(raw);
   }
 
   /** Guardar cambios en el dominio (update manual) */
-  async updateReview(review: Review): Promise<void> {
+  async updateReview(review: Domain.Review): Promise<void> {
     const entity = ReviewMapper.toPersistence(review);
     await this.reviewRepository.save(entity);
   }
 
   /** Buscar por id */
-  async findById(id: string): Promise<Review> {
+  async findById(id: string): Promise<Domain.Review> {
     const raw = await this.reviewRepository.findOneBy({ id });
 
     if (!raw) {
@@ -57,5 +54,34 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
     }
 
     return ReviewMapper.toDomain(raw);
+  }
+
+  async addQuestionToReviews(questionId: string): Promise<void> {
+    // Obtener todos los reviews existentes (persistencia)
+    const reviewsPersistence = await this.reviewRepository.find();
+
+    await Promise.all(
+      reviewsPersistence.map(async (reviewPersistence) => {
+        // Convertir a dominio
+        const reviewDomain = ReviewMapper.toDomain(reviewPersistence);
+
+        // Evitar duplicados
+        const alreadyExists = reviewDomain.content.questions.some(
+          (q) => q.questionId === questionId,
+        );
+        if (alreadyExists) return;
+
+        // Añadir nueva pregunta
+        reviewDomain.content.questions.push({
+          questionId,
+          userAnswerIds: [],
+          isCorrect: undefined,
+          answered: false,
+        });
+
+        // Guardar cambios en el dominio
+        await this.updateReview(reviewDomain);
+      }),
+    );
   }
 }

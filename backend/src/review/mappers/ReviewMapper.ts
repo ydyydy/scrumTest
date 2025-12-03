@@ -23,7 +23,6 @@ export class ReviewMapper {
     entity.startDate = review.startDate;
     entity.updatedAt = review.updatedAt;
 
-    // content JSON tal cual
     entity.content = review.content;
 
     return entity;

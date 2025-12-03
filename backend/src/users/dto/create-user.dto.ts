@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsEmail, Matches } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  Matches,
+  IsOptional,
+  IsBoolean,
+} from 'class-validator';
 import { PASSWORD_PATTERN } from '../../../common/utils/Constants';
 
 export class CreateUserDto {
@@ -18,6 +25,7 @@ export class CreateUserDto {
   })
   password: string;
 
-  @IsNotEmpty()
-  isAdmin: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isAdmin?: boolean;
 }

@@ -28,13 +28,18 @@ export class AuthServiceImpl implements AuthService {
       // Payload for the JWT
       const rol = user.isAdmin ? Role.ADMIN : Role.USER;
 
-      const payload = { sub: user.id, email: user.email, roles: rol };
+      const payload = {
+        sub: user.id,
+        email: user.email,
+        roles: rol,
+        username: user.username,
+      };
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (error) {
       this.logger.error('Error signing in', error);
-      throw new UnauthorizedException('Invalid email');
+      throw new UnauthorizedException('Invalid email or password');
     }
   }
 }

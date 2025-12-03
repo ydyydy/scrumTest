@@ -19,4 +19,7 @@ export class CreateQuestionDto {
 
   @IsString()
   category: string;
+
+  @IsString()
+  questionType: 'single' | 'multiple';
 }

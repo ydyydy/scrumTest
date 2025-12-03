@@ -4,7 +4,9 @@ import * as Domain from './domain';
 export abstract class ReviewRepository extends Repository<Domain.Review> {
   abstract save(entity: Domain.Review): Promise<Domain.Review>;
 
-  abstract findByUser(userId: string): Promise<Domain.Review | null>;
+  abstract findByUser(userId: string): Promise<Domain.Review>;
 
   abstract updateReview(review: Domain.Review): Promise<void>;
+
+  abstract addQuestionToReviews(questionId: string): Promise<void>;
 }

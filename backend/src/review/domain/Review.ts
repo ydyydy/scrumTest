@@ -3,8 +3,9 @@ import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
 
 export interface ReviewQuestion {
   questionId: string;
-  userAnswer?: string;
+  userAnswerIds?: string[];
   isCorrect?: boolean;
+  answered?: boolean;
 }
 
 export interface ReviewContent {

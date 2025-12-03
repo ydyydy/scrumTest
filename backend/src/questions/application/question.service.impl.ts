@@ -1,23 +1,19 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { QuestionService } from './question.service';
-import { QuestionRepository } from '../question.repository';
 import { Answer, Question } from '../domain';
 import { CreateQuestionDto } from '../dto/create-question.dto';
 import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
+import { ReviewRepository } from '../../review/review.repository';
+import { QuestionRepository } from '../question.repository';
 
 @Injectable()
 export class QuestionServiceImpl implements QuestionService {
-  constructor(private readonly questionRepository: QuestionRepository) {}
+  constructor(
+    private readonly questionRepository: QuestionRepository,
+    private readonly reviewRepository: ReviewRepository,
+  ) {}
 
-  private checkAdmin(isAdmin: boolean) {
-    if (!isAdmin) {
-      throw new UnauthorizedException('Only admins can perform this action');
-    }
-  }
-
-  async create(dto: CreateQuestionDto, isAdmin: boolean): Promise<Question> {
-    this.checkAdmin(isAdmin);
-
+  async create(dto: CreateQuestionDto): Promise<Question> {
     // Crear el ID de la pregunta
     const realQuestionId = new UniqueEntityID();
 
@@ -36,6 +32,7 @@ export class QuestionServiceImpl implements QuestionService {
         text: dto.text,
         answers,
         category: dto.category,
+        questionType: dto.questionType,
       },
       realQuestionId,
     );
@@ -43,11 +40,13 @@ export class QuestionServiceImpl implements QuestionService {
     // Guardar en repositorio
     await this.questionRepository.save(question);
 
+    // actualizar los reviews para que incluyan la nueva pregunta
+    await this.reviewRepository.addQuestionToReviews(question.id.toString());
+
     return question;
   }
 
-  async delete(id: string, isAdmin: boolean): Promise<void> {
-    this.checkAdmin(isAdmin);
+  async delete(id: string): Promise<void> {
     await this.questionRepository.delete(id);
   }
 

@@ -20,7 +20,9 @@ export class UserPassword extends ValueObject<UserpasswordProps> {
 
   public static async create(value: string): Promise<UserPassword> {
     if (!PASSWORD_PATTERN.test(value)) {
-      throw new Error('Password does not meet the required pattern.');
+      throw new Error(
+        'The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(value, PASSWORD_HASH_SALT_ROUNDS);

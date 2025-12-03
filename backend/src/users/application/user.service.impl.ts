@@ -1,8 +1,13 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserRepository } from '../user.repository';
 import { User } from '../domain';
 import { UserPassword } from '../domain/Password';
+import { CreateUserDto } from '../dto/create-user.dto';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -35,5 +40,21 @@ export class UserServiceImpl implements UserService {
 
   async getUserByEmail(email: string): Promise<User> {
     return this.userRepository.findByEmail(email);
+  }
+
+  async getUserById(id: string): Promise<User> {
+    return this.userRepository.findById(id);
+  }
+
+  async updateUser(
+    id: string,
+    updateUserDto: Partial<CreateUserDto>,
+  ): Promise<void> {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.username = updateUserDto.username ?? user.username;
+    await this.userRepository.save(user);
   }
 }

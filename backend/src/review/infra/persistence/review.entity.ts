@@ -24,8 +24,9 @@ export class Review {
   content: {
     questions: Array<{
       questionId: string;
-      userAnswer?: string;
+      userAnswerIds?: string[];
       isCorrect?: boolean;
+      answered?: boolean;
     }>;
   };
 }

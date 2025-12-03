@@ -49,5 +49,6 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'import/no-relative-packages': 'error',
     'no-underscore-dangle': 'off', // Allow dangling underscores in identifiers
+    noplusplus: 'off', // Allow the use of ++ and --
   },
 };

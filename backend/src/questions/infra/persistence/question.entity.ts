@@ -13,4 +13,10 @@ export class Question {
 
   @Column()
   category: string;
+
+  @Column({
+    type: 'simple-enum',
+    enum: ['single', 'multiple'],
+  })
+  questionType: 'single' | 'multiple';
 }
