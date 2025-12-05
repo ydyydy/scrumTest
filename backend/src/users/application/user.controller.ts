@@ -2,16 +2,22 @@ import { Response } from 'express';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
   Patch,
   Post,
+  Query,
   Res,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Public } from '../../auth/decorators/public.decorator';
+import { QueryPaginationDto } from '../../../common/utils/query-pagination.dto';
+import { PaginatedResponseDto } from '../../../common/dto/paginated-response.dto';
+import { ListUserDto } from '../dto/list-user.dto';
+import { UserResponseMapper } from '../mappers/user-response.mapper';
 
 @Controller('users')
 export class UserController {
@@ -35,6 +41,12 @@ export class UserController {
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: error.message || 'Error creating user' });
     }
+  }
+
+  @Public()
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<void> {
+    return this.usersService.deleteUser(id);
   }
 
   @Public()
@@ -70,5 +82,16 @@ export class UserController {
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: error.message });
     }
+  }
+
+  @Get()
+  @Public()
+  async findAll(
+    @Query() query: QueryPaginationDto,
+  ): Promise<PaginatedResponseDto<ListUserDto>> {
+    const { page, limit } = query;
+    const [users, total] = await this.usersService.findAll(page, limit);
+
+    return UserResponseMapper.toPaginatedResponse(users, total, page, limit);
   }
 }

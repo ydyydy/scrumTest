@@ -8,19 +8,21 @@ import {
   FloatingLabel,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MessageBox } from "../components/MessageBox";
 import { getUserProfile, updateUser } from "../services/user.service";
 import { useAuth } from "../context/AuthContext";
 
 export function UserProfile() {
   const { id } = useParams<{ id: string }>();
-  const { user, setUser } = useAuth(); // Necesitamos setUser para actualizar contexto
+  const { user, setUser } = useAuth();
+  const { token } = useAuth();
   const [username, setUsername] = useState(user?.username || "");
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
+  const navigate = useNavigate();
 
   // Cargar datos del usuario si no está en contexto
   useEffect(() => {
@@ -44,10 +46,12 @@ export function UserProfile() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    if (!token) {
+      navigate("/login");
+    }
     try {
       // PATCH para actualizar el username
-      await updateUser(id!, { username });
+      await updateUser(id!, { username }, token!);
 
       // Actualizamos directamente el contexto para reflejar el cambio
       setUser && setUser({ ...user!, username });

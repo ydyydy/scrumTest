@@ -55,6 +55,20 @@ export class UserServiceImpl implements UserService {
       throw new NotFoundException('User not found');
     }
     user.username = updateUserDto.username ?? user.username;
+    user.isAdmin = updateUserDto.isAdmin ?? user.isAdmin;
     await this.userRepository.save(user);
+  }
+
+  async findAll(page?: number, limit?: number): Promise<[User[], number]> {
+    const [users, total] = await this.userRepository.findUsers(page, limit);
+    return [users, total];
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.userRepository.delete(id);
   }
 }

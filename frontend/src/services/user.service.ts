@@ -58,15 +58,17 @@ export async function getUserProfile(
   return data;
 }
 
-// Actualizar username (PATCH)
+// Actualizar usuario
 export async function updateUser(
   id: string,
-  payload: { username: string }
+  payload: Partial<{ username: string; isAdmin: boolean }>,
+  token: string
 ): Promise<void> {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
   });
@@ -74,5 +76,33 @@ export async function updateUser(
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || "Error updating user");
+  }
+}
+
+// Obtener lista de usuarios con paginación
+export async function getUsers(page: number, limit: number, token: string) {
+  const response = await fetch(`${API_URL}?page=${page}&limit=${limit}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) throw new Error("Error fetching users");
+
+  return await response.json();
+}
+
+// Eliminar usuario
+export async function deleteUser(id: string, token: string): Promise<void> {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Error deleting user");
   }
 }

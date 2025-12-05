@@ -3,3 +3,7 @@
 ### Find user by ID
 GET {{baseUrl}}/{{userId}}
 Content-Type: application/json
+
+### Find all users with pagination
+GET {{baseUrl}}?page=1&limit=10
+Content-Type: application/json

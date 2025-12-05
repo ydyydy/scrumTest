@@ -17,4 +17,8 @@ export abstract class UserService {
     id: string,
     updateUserDto: Partial<CreateUserDto>,
   ): Promise<void>;
+
+  abstract findAll(page?: number, limit?: number): Promise<[User[], number]>;
+
+  abstract deleteUser(id: string): Promise<void>;
 }

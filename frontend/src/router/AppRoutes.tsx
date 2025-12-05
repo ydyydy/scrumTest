@@ -9,14 +9,18 @@ import { Review } from "../pages/Review";
 import { UserProfile } from "../pages/profile";
 import { AdminHome } from "../pages/AdminHome";
 import { CreateQuestion } from "../pages/CreateQuestion";
+import { ManageQuestions } from "../pages/ManageQuestions";
+import { ManageUsers } from "../pages/ManageUsers";
 
 export function AppRoutes() {
   const { isLoggedIn, isAdmin } = useAuth();
-  console.log("isAdmin en AppRoutes:", isAdmin);
   return (
     <Routes>
       {/* General */}
-      <Route path="/" element={<Home />} />
+      <Route
+        path="/"
+        element={isLoggedIn ? isAdmin ? <AdminHome /> : <Games /> : <Home />}
+      />
       <Route
         path="/home"
         element={isLoggedIn ? isAdmin ? <AdminHome /> : <Games /> : <Home />}
@@ -39,6 +43,8 @@ export function AppRoutes() {
 
       {/* Admin */}
       <Route path="/create-question" element={<CreateQuestion />} />
+      <Route path="/manage-questions" element={<ManageQuestions />} />
+      <Route path="/manage-users" element={<ManageUsers />} />
     </Routes>
   );
 }

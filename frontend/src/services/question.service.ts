@@ -24,6 +24,7 @@ export async function createQuestion(
   dto: CreateQuestionDto,
   token: string
 ): Promise<void> {
+  console.log(token);
   const response = await fetch(`${API_URL}`, {
     method: "POST",
     headers: {
@@ -37,4 +38,29 @@ export async function createQuestion(
     const error = await response.json();
     throw new Error(error.message || "Error creating question");
   }
+}
+
+export async function getQuestions(page: number, limit: number, token: string) {
+  const response = await fetch(`${API_URL}?page=${page}&limit=${limit}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) throw new Error("Error fetching questions");
+
+  return await response.json();
+}
+
+export async function deleteQuestion(id: string, token: string) {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) throw new Error("Error deleting question");
+
+  return true;
 }

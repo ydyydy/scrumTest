@@ -13,6 +13,7 @@ import { MessageBox } from "../components/MessageBox";
 import { QuestionCategory } from "../../../backend/common/utils/enum";
 import { FaTrash, FaPlus } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface AnswerInput {
   text: string;
@@ -31,6 +32,7 @@ export function CreateQuestion() {
   const [loading, setLoading] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
   const { token } = useAuth();
+  const navigate = useNavigate();
 
   // Cambiar valor de texto o isCorrect
   const handleAnswerChange = (
@@ -51,6 +53,10 @@ export function CreateQuestion() {
       newAnswers[index].isCorrect = value as boolean;
     }
     setAnswers(newAnswers);
+  };
+
+  const handleCancel = () => {
+    navigate("/home");
   };
 
   // Agregar nueva respuesta
@@ -91,7 +97,7 @@ export function CreateQuestion() {
       setLoading(false);
       return;
     }
-
+    console.log(token);
     try {
       await createQuestion(
         {
@@ -233,9 +239,17 @@ export function CreateQuestion() {
                 </div>
 
                 <div className="d-grid gap-2">
-                  <Button type="submit" className="btn-scrum">
-                    Crear Pregunta
-                  </Button>
+                  <button type="submit" className="btn btn-primary">
+                    Guardar Pregunta
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={handleCancel}
+                  >
+                    Cancelar
+                  </button>
                 </div>
               </Form>
 

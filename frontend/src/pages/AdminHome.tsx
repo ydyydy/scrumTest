@@ -7,7 +7,7 @@ export function AdminHome() {
 
   const handleCreateQuestion = () => navigate("/create-question");
   const handleManageQuestions = () => navigate("/manage-questions");
-  const handleManageUsers = () => navigate("/admin-users");
+  const handleManageUsers = () => navigate("/manage-users");
 
   return (
     <Container className="py-5">

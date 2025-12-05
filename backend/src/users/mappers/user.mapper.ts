@@ -1,7 +1,7 @@
-import { UniqueEntityID } from '../../common/core/UniqueEntityID';
-import * as Domain from './domain';
-import { UserPassword } from './domain/Password';
-import * as Persistence from './infra/persistence';
+import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
+import * as Domain from '../domain';
+import { UserPassword } from '../domain/Password';
+import * as Persistence from '../infra/persistence';
 
 export class UserMapper {
   static toDomain(raw: Persistence.User): Domain.User {
