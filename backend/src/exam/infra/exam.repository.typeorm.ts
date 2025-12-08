@@ -73,4 +73,8 @@ export class ExamRepositoryTypeOrm extends ExamRepository {
 
     return [rows.map(ExamMapper.toDomain), total];
   }
+
+  async delete(id: string): Promise<void> {
+    await this.examRepository.delete(id);
+  }
 }

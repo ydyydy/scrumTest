@@ -71,6 +71,23 @@ export async function answerQuestion(
   return res.json() as Promise<AnswerQuestionResult>;
 }
 
+export async function deleteReview(
+  reviewId: string,
+  token: string
+): Promise<void> {
+  const res = await fetch(`${API_URL}/${reviewId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await safeParseError(res);
+    throw new Error(err);
+  }
+}
+
 /** Helper para sacar mensaje de error del body si existe */
 async function safeParseError(res: Response): Promise<string> {
   try {

@@ -22,12 +22,32 @@ Content-Type: application/json
     "isAdmin": true
 }
 
-### Create user without isAdmin (should default to false)
+### Create user without isAdmin
 POST {{baseUrl}}
 Content-Type: application/json
 
 {
     "username": "alumno 1",
     "email": "alumno2@gmail.com",
-    "password": "Pa"
+    "password": "Password2"
+}
+
+### Create user with existing email
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+    "username": "alumno 1",
+    "email": "alumno2@gmail.com",
+    "password": "Password2"
+}
+
+### Create user with weak password
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+    "username": "alumno 1",
+    "email": "alumno3@gmail.com",
+    "password": "pass"
 }

@@ -157,4 +157,8 @@ export class ReviewServiceImpl implements ReviewService {
     // Guardar cambios
     await this.reviewRepository.updateReview(review);
   }
+
+  async deleteReview(id: string): Promise<void> {
+    return this.reviewRepository.delete(id);
+  }
 }

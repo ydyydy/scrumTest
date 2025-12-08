@@ -198,4 +198,10 @@ export class ExamServiceImpl implements ExamService {
       limit,
     };
   }
+
+  async deleteExam(id: string): Promise<void> {
+    const exam = await this.examRepository.findById(id);
+    if (!exam) throw new NotFoundException('Exam not found');
+    await this.examRepository.delete(id);
+  }
 }

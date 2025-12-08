@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -112,5 +113,11 @@ export class ExamController {
           .json({ message: 'Internal server error' });
       }
     }
+  }
+
+  @Delete(':id')
+  @Public()
+  async delete(@Param('id') id: string): Promise<void> {
+    return this.examService.deleteExam(id);
   }
 }

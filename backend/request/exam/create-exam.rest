@@ -6,5 +6,5 @@ Content-Type: application/json
 Authorization: Bearer {{userToken}}
 
 {
-    "userId": "708a95c8-9f2b-4e83-9adf-7dd17fb2e21c"
+    "userId": "d4a63328-ba91-47ea-9583-49862bc260b6"
 }

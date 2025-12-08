@@ -59,8 +59,16 @@ export class UserServiceImpl implements UserService {
     await this.userRepository.save(user);
   }
 
-  async findAll(page?: number, limit?: number): Promise<[User[], number]> {
-    const [users, total] = await this.userRepository.findUsers(page, limit);
+  async findAll(
+    userId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<[User[], number]> {
+    const [users, total] = await this.userRepository.findUsers(
+      userId,
+      page,
+      limit,
+    );
     return [users, total];
   }
 

@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository as TypeOrmRepository } from 'typeorm/repository/Repository';
+import { Not } from 'typeorm';
 import { UserRepository } from '../user.repository';
 import * as Persistence from './persistence';
 import * as Domain from '../domain';
@@ -16,16 +17,17 @@ export class UserRepositoryTypeOrm extends UserRepository {
     super();
   }
 
-  save(entity: Domain.User): Promise<Domain.User> {
-    return this.userRepository
-      .save(UserMapper.toPersistence(entity))
-      .then((user) => UserMapper.toDomain(user));
+  async save(entity: Domain.User): Promise<Domain.User> {
+    const user = await this.userRepository.save(
+      UserMapper.toPersistence(entity),
+    );
+    return UserMapper.toDomain(user);
   }
 
   async findById(id: string): Promise<Domain.User> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
-      throw new Error(`User with id ${id} not found`);
+      throw new NotFoundException(`User with id ${id} not found`);
     }
     return UserMapper.toDomain(user);
   }
@@ -33,22 +35,24 @@ export class UserRepositoryTypeOrm extends UserRepository {
   async findByEmail(email: string): Promise<Domain.User> {
     const user = await this.userRepository.findOneBy({ email });
     if (!user) {
-      throw new Error(`User with email ${email} not found`);
+      throw new NotFoundException(`User with email ${email} not found`);
     }
     return UserMapper.toDomain(user);
   }
 
   async findUsers(
+    myUserId?: string,
     page: number = PaginationDefaults.DEFAULT_PAGE,
     limit: number = PaginationDefaults.DEFAULT_LIMIT,
   ): Promise<[Domain.User[], number]> {
     // Obtener usuarios paginados
     const [users, total] = await this.userRepository.findAndCount({
+      where: myUserId ? { id: Not(myUserId) } : undefined,
       skip: (page - 1) * limit,
       take: limit,
     });
 
-    // Transformar cada usuario a dominio (opcional, según tu arquitectura)
+    // Transformar cada usuario a dominio
     const usersDomain = users.map((u) => UserMapper.toDomain(u));
 
     return [usersDomain, total];

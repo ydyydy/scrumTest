@@ -26,12 +26,12 @@ export class AuthServiceImpl implements AuthService {
       }
 
       // Payload for the JWT
-      const rol = user.isAdmin ? Role.ADMIN : Role.USER;
+      const roles = user.isAdmin ? [Role.ADMIN] : [Role.USER];
 
       const payload = {
         sub: user.id,
         email: user.email,
-        roles: rol,
+        roles,
         username: user.username,
       };
       return {

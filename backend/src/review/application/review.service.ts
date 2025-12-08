@@ -13,6 +13,8 @@ export abstract class ReviewService {
 
   abstract update(id: string, dto: UpdateReviewDto): Promise<void>;
 
+  abstract deleteReview(id: string): Promise<void>;
+
   abstract answerQuestion(
     reviewId: string,
     dto: SubmitReviewAnswerDto,

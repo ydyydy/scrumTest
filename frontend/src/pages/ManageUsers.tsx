@@ -13,6 +13,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getUsers, deleteUser, updateUser } from "../services/user.service";
 import { ScrumPagination } from "../components/ScrumPagination";
+import { deleteReview } from "../services/review.service";
+import { deleteQuestion } from "../services/question.service";
+import { deleteExam } from "../services/exam.service";
 
 interface User {
   id: string;
@@ -61,6 +64,9 @@ export function ManageUsers() {
     if (!confirmed) return;
 
     try {
+      await deleteReview(id, token);
+      await deleteExam(id, token);
+      await deleteQuestion(id, token);
       await deleteUser(id, token);
       fetchUsers();
     } catch (error) {

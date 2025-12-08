@@ -86,4 +86,8 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
       }),
     );
   }
+
+  async delete(id: string): Promise<void> {
+    await this.reviewRepository.delete(id);
+  }
 }

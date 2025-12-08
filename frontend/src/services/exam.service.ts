@@ -196,3 +196,17 @@ export async function getUserExamHistory(
 
   return res.json();
 }
+
+export async function deleteExam(examId: string, token: string): Promise<void> {
+  const res = await fetch(`${API_URL}/${examId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await safeParseError(res);
+    throw new Error(err);
+  }
+}

@@ -7,6 +7,7 @@ import {
   Body,
   HttpStatus,
   Res,
+  Delete,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '../../auth/decorators/public.decorator';
@@ -96,5 +97,11 @@ export class ReviewController {
     } catch (err) {
       res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
     }
+  }
+
+  @Delete(':id')
+  @Public()
+  async delete(@Param('id') id: string): Promise<void> {
+    return this.reviewService.deleteReview(id);
   }
 }

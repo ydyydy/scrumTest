@@ -12,6 +12,8 @@ export abstract class ExamService {
 
   abstract getExamById(id: string): Promise<Exam>;
 
+  abstract deleteExam(id: string): Promise<void>;
+
   abstract saveUserAnswer(
     examId: string,
     questionId: string,

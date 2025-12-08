@@ -10,6 +10,7 @@ import {
   Post,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -18,6 +19,9 @@ import { QueryPaginationDto } from '../../../common/utils/query-pagination.dto';
 import { PaginatedResponseDto } from '../../../common/dto/paginated-response.dto';
 import { ListUserDto } from '../dto/list-user.dto';
 import { UserResponseMapper } from '../mappers/user-response.mapper';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../../common/utils/enum';
 
 @Controller('users')
 export class UserController {
@@ -43,8 +47,9 @@ export class UserController {
     }
   }
 
-  @Public()
   @Delete(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   async delete(@Param('id') id: string): Promise<void> {
     return this.usersService.deleteUser(id);
   }
@@ -88,9 +93,10 @@ export class UserController {
   @Public()
   async findAll(
     @Query() query: QueryPaginationDto,
+    @Query('userId') userId: string,
   ): Promise<PaginatedResponseDto<ListUserDto>> {
     const { page, limit } = query;
-    const [users, total] = await this.usersService.findAll(page, limit);
+    const [users, total] = await this.usersService.findAll(userId, page, limit);
 
     return UserResponseMapper.toPaginatedResponse(users, total, page, limit);
   }

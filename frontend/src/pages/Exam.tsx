@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Form,
-  ProgressBar,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import {
   createExam,
   saveAnswer,

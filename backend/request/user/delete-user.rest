@@ -1,0 +1,6 @@
+@baseUrl = http://localhost:3000/users
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiIxZDg4MTM3Zi00ZTFlLTQ1ZGQtODViNi04MmQzY2IyYmY5M2UifSwiZW1haWwiOiJhbHVtbm8xQGdtYWlsLmNvbSIsInJvbGVzIjpbInVzZXIiXSwidXNlcm5hbWUiOiJhbHVtbm8gMSIsImlhdCI6MTc2NTIzMjIyMSwiZXhwIjoxNzY1MjM1ODIxfQ.-ipsDbLnecEv91hhCZooELTeNaZ7YLYYYjzufgQhZkc
+@userId = 1a922d0c-220a-4818-a120-b5bb861684cf
+DELETE {{baseUrl}}/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
