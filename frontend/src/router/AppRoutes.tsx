@@ -11,6 +11,9 @@ import { AdminHome } from "../pages/AdminHome";
 import { CreateQuestion } from "../pages/CreateQuestion";
 import { ManageQuestions } from "../pages/ManageQuestions";
 import { ManageUsers } from "../pages/ManageUsers";
+import { Exam } from "../pages/Exam";
+import { ExamResultPage } from "../pages/ExamResultPage";
+import { Ranking } from "../pages/Ranking";
 
 export function AppRoutes() {
   const { isLoggedIn, isAdmin } = useAuth();
@@ -38,8 +41,9 @@ export function AppRoutes() {
       {/* games */}
       <Route path="/games" element={<Games />} />
       <Route path="/games/review" element={<Review />} />
-      <Route path="/games/exam" element={<Home />} />
-      <Route path="/games/ranking" element={<Home />} />
+      <Route path="/games/exam" element={<Exam />} />
+      <Route path="/games/exam/result/:examId" element={<ExamResultPage />} />
+      <Route path="/games/ranking" element={<Ranking />} />
 
       {/* Admin */}
       <Route path="/create-question" element={<CreateQuestion />} />

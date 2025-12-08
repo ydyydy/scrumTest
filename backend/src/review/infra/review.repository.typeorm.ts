@@ -31,10 +31,12 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
   }
 
   /** Buscar review por usuario */
-  async findByUser(userId: string): Promise<Domain.Review> {
+  async findByUser(userId: string): Promise<Domain.Review | null> {
     const raw = await this.reviewRepository.findOneBy({ userId });
 
-    if (!raw) throw new Error(`Review con userId ${userId} no encontrado`);
+    if (!raw) {
+      return null;
+    }
 
     return ReviewMapper.toDomain(raw);
   }

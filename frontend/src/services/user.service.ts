@@ -42,6 +42,7 @@ export async function loginUser(
 export async function getUserProfile(
   id: string
 ): Promise<{ id: string; email: string; username: string }> {
+  console.log("Fetching user profile for ID:", id);
   const response = await fetch(`${API_URL}/${id}`, {
     method: "GET",
     headers: {

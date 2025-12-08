@@ -8,7 +8,7 @@ import {
 } from "react";
 
 export interface User {
-  sub: string;
+  sub: { value: string };
   email: string;
   roles: string; // ahora puede ser "admin" o "user"
   username: string;

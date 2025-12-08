@@ -32,9 +32,11 @@ export function Review() {
 
     async function loadReview() {
       try {
-        let reviewData = await getReviewByUser(user!.sub);
-        if (!reviewData) reviewData = await createReview(user!.sub);
+        let reviewData = await getReviewByUser(user!.sub.value);
 
+        if (!reviewData) {
+          reviewData = await createReview(user!.sub.value);
+        }
         setReview(reviewData);
 
         const firstQuestionId = reviewData.content.questions[0].questionId;

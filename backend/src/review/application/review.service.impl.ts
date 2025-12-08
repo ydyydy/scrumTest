@@ -58,7 +58,7 @@ export class ReviewServiceImpl implements ReviewService {
   }
 
   /** Buscar review por usuario */
-  async findByUser(userId: string): Promise<Review> {
+  async findByUser(userId: string): Promise<Review | null> {
     return this.reviewRepository.findByUser(userId);
   }
 

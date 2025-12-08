@@ -97,7 +97,6 @@ export function CreateQuestion() {
       setLoading(false);
       return;
     }
-    console.log(token);
     try {
       await createQuestion(
         {

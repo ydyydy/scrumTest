@@ -1,11 +1,11 @@
-import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
 import { EntityRoot } from '../../../common/core/EntityRoot';
+import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
 
 export interface ExamQuestion {
   questionId: string;
-  correctAnswerId?: string;
-  userAnswer?: string;
+  userAnswerIds?: string[];
   isCorrect?: boolean;
+  answered?: boolean;
 }
 
 export interface ExamContent {
@@ -15,11 +15,10 @@ export interface ExamContent {
 export interface ExamProps {
   userId: string;
   startDate: Date;
-  endDate: Date;
-  timeSpent: number;
-  score: number;
+  finishDate: Date | null;
+  duration: number | null;
+  score: number | null;
   content: ExamContent;
-  isSubmitted: boolean;
 }
 
 export class Exam extends EntityRoot<ExamProps> {
@@ -43,27 +42,27 @@ export class Exam extends EntityRoot<ExamProps> {
     this.props.startDate = startDate;
   }
 
-  get endDate(): Date {
-    return this.props.endDate;
+  get finishDate(): Date | null {
+    return this.props.finishDate;
   }
 
-  set endDate(endDate: Date) {
-    this.props.endDate = endDate;
+  set finishDate(finishDate: Date | null) {
+    this.props.finishDate = finishDate;
   }
 
-  get timeSpent(): number {
-    return this.props.timeSpent;
+  get duration(): number | null {
+    return this.props.duration;
   }
 
-  set timeSpent(timeSpent: number) {
-    this.props.timeSpent = timeSpent;
+  set duration(duration: number | null) {
+    this.props.duration = duration;
   }
 
-  get score(): number {
+  get score(): number | null {
     return this.props.score;
   }
 
-  set score(score: number) {
+  set score(score: number | null) {
     this.props.score = score;
   }
 
@@ -75,17 +74,9 @@ export class Exam extends EntityRoot<ExamProps> {
     this.props.content = content;
   }
 
-  set isSubmitted(isSubmitted: boolean) {
-    this.props.isSubmitted = isSubmitted;
-  }
-
-  get isSubmitted(): boolean {
-    return this.props.isSubmitted;
-  }
-
   public static create(props: ExamProps, id?: UniqueEntityID): Exam {
-    if (!props.userId) {
-      throw new Error('[Exam] Missing userId property.');
+    if (!props.userId || !props.startDate || !props.content) {
+      throw new Error('[Exam] Missing required properties.');
     }
 
     return new Exam(props, id);

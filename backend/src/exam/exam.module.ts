@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { QuestionsModule } from '../questions/question.module';
-import { Exam } from './domain';
 import { ExamController } from './application/exam.controller';
 import { ExamServiceImpl } from './application/exam.service.impl';
 import { ExamRepository } from './exam.repository';
 import { ExamService } from './application/exam.service';
 import { ExamRepositoryTypeOrm } from './infra/exam.repository.typeorm';
+import { Exam } from './infra/persistence';
+import { UsersModule } from '../users/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exam]), QuestionsModule],
+  imports: [TypeOrmModule.forFeature([Exam]), QuestionsModule, UsersModule],
   controllers: [ExamController],
   providers: [
     {
@@ -22,6 +22,6 @@ import { ExamRepositoryTypeOrm } from './infra/exam.repository.typeorm';
       useClass: ExamRepositoryTypeOrm,
     },
   ],
-  exports: [ExamService],
+  exports: [ExamService, ExamRepository],
 })
 export class ExamModule {}

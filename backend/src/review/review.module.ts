@@ -23,4 +23,4 @@ import { SharedModule } from '../shared/shared.module';
   ],
   exports: [ReviewService, ReviewRepository],
 })
-export class ReviewModule {}
+export class ReviewsModule {}

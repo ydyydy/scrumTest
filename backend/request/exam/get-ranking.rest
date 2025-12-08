@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:3000/exams
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJkMDM0OWQyNC00ZjFmLTQzZTAtODgwNi01MzQyZDY2MzE5MmMifSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzYzNjYzMDYzLCJleHAiOjE3NjM2NjY2NjN9.lI_mKID1Zhugf03o7yijPw0QiIZ07lObdqLcaQS7Qx8
+@id = 35632761-06d6-4c44-9d95-5a281ef81a96
+### Create Exam Request
+GET  {{baseUrl}}/ranking
+Content-Type: application/json
+Authorization: Bearer {{userToken}}

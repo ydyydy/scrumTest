@@ -20,6 +20,6 @@ import { UserServiceImpl } from './application/user.service.impl';
       useClass: UserRepositoryTypeOrm,
     },
   ],
-  exports: [UserService],
+  exports: [UserService, UserRepository],
 })
 export class UsersModule {}

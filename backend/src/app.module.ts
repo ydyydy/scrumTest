@@ -4,7 +4,7 @@ import * as path from 'path';
 import { UsersModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
 import { QuestionsModule } from './questions/question.module';
-import { ReviewModule } from './review/review.module';
+import { ReviewsModule } from './review/review.module';
 import { ExamModule } from './exam/exam.module';
 
 @Module({
@@ -18,7 +18,7 @@ import { ExamModule } from './exam/exam.module';
     UsersModule,
     QuestionsModule,
     AuthModule,
-    ReviewModule,
+    ReviewsModule,
     ExamModule,
   ],
 })

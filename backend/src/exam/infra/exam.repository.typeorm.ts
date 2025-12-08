@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository as TypeOrmRepository } from 'typeorm/repository/Repository';
+import { Exam } from '../domain/Exam';
 import { ExamRepository } from '../exam.repository';
 import { ExamMapper } from '../mappers/examMapper';
-import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
-import * as Domain from '../domain';
 import * as Persistence from './persistence';
+import * as Domain from '../domain';
 
 @Injectable()
 export class ExamRepositoryTypeOrm extends ExamRepository {
@@ -16,28 +16,23 @@ export class ExamRepositoryTypeOrm extends ExamRepository {
     super();
   }
 
-  async save(exam: Domain.Exam): Promise<Domain.Exam> {
-    const start = new Date();
-    const end = new Date(start.getTime() + 45 * 60 * 1000); // +45min
+  async save(entity: Domain.Exam): Promise<Domain.Exam> {
+    const domainExam = Domain.Exam.create({
+      userId: entity.userId,
+      startDate: entity.startDate,
+      finishDate: entity.finishDate ?? null,
+      duration: entity.duration ?? null,
+      score: entity.score ?? null,
+      content: entity.content,
+    });
 
-    const examEntity = Domain.Exam.create(
-      {
-        userId: exam.userId,
-        startDate: start,
-        endDate: end,
-        score: 0,
-        timeSpent: 0,
-        content: exam.content,
-        isSubmitted: false,
-      },
-      new UniqueEntityID(),
-    );
+    const exam = ExamMapper.toPersistence(domainExam);
+    await this.examRepository.save(exam);
 
-    await this.examRepository.save(ExamMapper.toPersistence(examEntity));
-    return examEntity;
+    return domainExam;
   }
 
-  async findById(id: string): Promise<Domain.Exam> {
+  async findById(id: string): Promise<Exam> {
     const raw = await this.examRepository.findOneBy({ id });
 
     if (!raw) {
@@ -47,7 +42,35 @@ export class ExamRepositoryTypeOrm extends ExamRepository {
     return ExamMapper.toDomain(raw);
   }
 
-  async updateExam(exam: Domain.Exam): Promise<void> {
-    await this.examRepository.save(ExamMapper.toPersistence(exam));
+  async findWithLimit(limit = 20): Promise<Domain.Exam[]> {
+    const raws = await this.examRepository
+      .createQueryBuilder('exams')
+      .orderBy('exams.score', 'DESC')
+      .addOrderBy('exams.duration', 'ASC')
+      .take(limit)
+      .getMany();
+
+    return raws.map(ExamMapper.toDomain);
+  }
+
+  async update(exam: Domain.Exam): Promise<Domain.Exam> {
+    const persistence = ExamMapper.toPersistence(exam);
+    await this.examRepository.save(persistence);
+    return exam;
+  }
+
+  async findHistoryByUser(
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<[Domain.Exam[], number]> {
+    const [rows, total] = await this.examRepository.findAndCount({
+      where: { userId },
+      order: { finishDate: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return [rows.map(ExamMapper.toDomain), total];
   }
 }

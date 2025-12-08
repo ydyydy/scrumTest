@@ -24,7 +24,6 @@ export async function createQuestion(
   dto: CreateQuestionDto,
   token: string
 ): Promise<void> {
-  console.log(token);
   const response = await fetch(`${API_URL}`, {
     method: "POST",
     headers: {
