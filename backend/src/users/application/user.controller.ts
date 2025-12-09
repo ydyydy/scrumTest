@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -54,7 +55,6 @@ export class UserController {
     return this.usersService.deleteUser(id);
   }
 
-  @Public()
   @Get(':id')
   async getProfile(@Param('id') id: string, @Res() res: Response) {
     const user = await this.usersService.getUserById(id);
@@ -70,7 +70,6 @@ export class UserController {
     });
   }
 
-  @Public()
   @Patch(':id')
   async updateUser(
     @Param('id') id: string,
@@ -90,12 +89,12 @@ export class UserController {
   }
 
   @Get()
-  @Public()
   async findAll(
     @Query() query: QueryPaginationDto,
-    @Query('userId') userId: string,
+    @Req() req,
   ): Promise<PaginatedResponseDto<ListUserDto>> {
     const { page, limit } = query;
+    const userId = req.user?.sub?.value;
     const [users, total] = await this.usersService.findAll(userId, page, limit);
 
     return UserResponseMapper.toPaginatedResponse(users, total, page, limit);

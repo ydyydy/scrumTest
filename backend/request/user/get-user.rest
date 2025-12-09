@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3000/users
-@userToken = token
-@userId = userId-to-delete
-DELETE {{baseUrl}}/{{userId}}
+@userToken = userToken
+@userId = userId-to-get
+GET {{baseUrl}}/{{userId}}
 Content-Type: application/json
 Authorization: Bearer {{userToken}}

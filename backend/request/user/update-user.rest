@@ -1,11 +1,13 @@
 @baseUrl = http://localhost:3000/users
-@userId = ce0f04da-2fbb-47e7-9dc2-b8f1efe81d0b
+@userToken = token
+@userId = userId-to-update
 ### Update user by ID
 PATCH {{baseUrl}}/{{userId}}
 Content-Type: application/json
+Authorization: Bearer {{userToken}}
 
 {
-  "username": "Soy alumno"
+  "username": "Alumno uno"
 }
 
 ### Update user rol by ID
