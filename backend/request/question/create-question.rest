@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3000/questions
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJkMDM0OWQyNC00ZjFmLTQzZTAtODgwNi01MzQyZDY2MzE5MmMifSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzYzNjYzMDYzLCJleHAiOjE3NjM2NjY2NjN9.lI_mKID1Zhugf03o7yijPw0QiIZ07lObdqLcaQS7Qx8
+@adminToken = token
 ### Create question (admin only)
 POST {{baseUrl}}    
 Content-Type: application/json
@@ -49,4 +49,19 @@ Authorization: Bearer {{adminToken}}
     ],
     "category": "1",
     "questionType": "single"
+  }
+
+### Create question with two answers (admin only)
+POST {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+    "text": "¿Cuáles son los pilares de Scrum?",
+    "answers": [
+      { "text": "Transparencia, inspección, adaptación", "isCorrect": true },
+      { "text": "Planificación, ejecución, cierre", "isCorrect": false }
+    ],
+    "category": "4",
+    "questionType": "simple"
   }

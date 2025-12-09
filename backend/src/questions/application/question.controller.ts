@@ -16,12 +16,10 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { CreateQuestionDto } from '../dto/create-question.dto';
 import { QuestionService } from './question.service';
 import { Role } from '../../../common/utils/enum';
-import { Question } from '../domain';
 import { QueryPaginationDto } from '../../../common/utils/query-pagination.dto';
 import { QuestionResponseMapper } from '../mappers/question-response.mapper';
 import { PaginatedResponseDto } from '../../../common/dto/paginated-response.dto';
 import { ListQuestionDto } from '../dto/list-question.dto';
-import { Public } from '../../auth/decorators/public.decorator';
 
 @Controller('questions')
 export class QuestionController {
@@ -31,23 +29,33 @@ export class QuestionController {
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   async create(@Body() dto: CreateQuestionDto, @Res() res: Response) {
-    const question = await this.questionService.create(dto);
-    const locationUrl = `/questions/${question.id}`;
-    res
-      .status(HttpStatus.CREATED)
-      .location(locationUrl)
-      .json({ id: question.id });
+    try {
+      const question = await this.questionService.create(dto);
+      const locationUrl = `/questions/${question.id}`;
+      res
+        .status(HttpStatus.CREATED)
+        .location(locationUrl)
+        .json({ id: question.id });
+    } catch (err) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
+    }
   }
 
   @Delete(':id')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.questionService.delete(id);
+  async delete(@Param('id') id: string, @Res() res: Response) {
+    try {
+      await this.questionService.delete(id);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: `Question with id ${id} deleted` });
+    } catch (err) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
+    }
   }
 
   @Get()
-  @Public()
   async findAll(
     @Query() query: QueryPaginationDto,
   ): Promise<PaginatedResponseDto<ListQuestionDto>> {
@@ -63,8 +71,18 @@ export class QuestionController {
   }
 
   @Get(':id')
-  @Public()
-  async findById(@Param('id') id: string): Promise<Question> {
-    return this.questionService.findById(id);
+  async findById(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const question = await this.questionService.findById(id);
+      if (!question) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: `Question with id ${id} not found` });
+      }
+      const locationUrl = `/questions/${question.id}`;
+      return res.status(HttpStatus.OK).location(locationUrl).json(question);
+    } catch (err) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
+    }
   }
 }

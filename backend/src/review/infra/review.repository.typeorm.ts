@@ -15,7 +15,6 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
     super();
   }
 
-  /** Crear un nuevo review */
   async save(entity: Domain.Review): Promise<Domain.Review> {
     const domainReview = Domain.Review.create({
       userId: entity.userId,
@@ -30,7 +29,6 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
     return domainReview;
   }
 
-  /** Buscar review por usuario */
   async findByUser(userId: string): Promise<Domain.Review | null> {
     const raw = await this.reviewRepository.findOneBy({ userId });
 
@@ -41,7 +39,6 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
     return ReviewMapper.toDomain(raw);
   }
 
-  /** Guardar cambios en el dominio (update manual) */
   async updateReview(review: Domain.Review): Promise<void> {
     const entity = ReviewMapper.toPersistence(review);
     await this.reviewRepository.save(entity);
@@ -89,5 +86,9 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
 
   async delete(id: string): Promise<void> {
     await this.reviewRepository.delete(id);
+  }
+
+  async deleteByUserId(userId: string): Promise<void> {
+    await this.reviewRepository.delete({ userId });
   }
 }

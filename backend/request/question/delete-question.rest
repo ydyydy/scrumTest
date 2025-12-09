@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3000/questions
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJkMDM0OWQyNC00ZjFmLTQzZTAtODgwNi01MzQyZDY2MzE5MmMifSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzYzNjYzMDYzLCJleHAiOjE3NjM2NjY2NjN9.lI_mKID1Zhugf03o7yijPw0QiIZ07lObdqLcaQS7Qx8
-@questionId = 37bc99ca-8deb-4e0f-9855-9d10a29acc4e
+@adminToken = token
+@questionId = questionId
 ### delete question (admin only)
 DELETE {{baseUrl}}/{{questionId}}
 Content-Type: application/json

@@ -98,7 +98,7 @@ export class ExamServiceImpl implements ExamService {
     exam.finishDate = now;
     exam.duration = duration;
 
-    // Calcular score
+    // Calcular puntuación
     const correct = exam.content.questions.filter(
       (q) => q.isCorrect === true,
     ).length;
@@ -151,7 +151,7 @@ export class ExamServiceImpl implements ExamService {
       exams.map(async (exam) => {
         const user = await this.userRepository.findById(exam.userId);
         return {
-          username: user?.username || 'Desconocido',
+          username: user?.username || 'Usuario desconocido',
           score: exam.score ?? 0,
           duration: exam.duration ?? 0,
         };
@@ -182,7 +182,7 @@ export class ExamServiceImpl implements ExamService {
       ).length;
 
       return {
-        examId: id.toString(), // <-- FIX
+        examId: id.toString(),
         score,
         duration,
         correct,
@@ -203,5 +203,9 @@ export class ExamServiceImpl implements ExamService {
     const exam = await this.examRepository.findById(id);
     if (!exam) throw new NotFoundException('Exam not found');
     await this.examRepository.delete(id);
+  }
+
+  async deleteAllExamsOfUser(userId: string): Promise<void> {
+    await this.examRepository.deleteAllByUserId(userId);
   }
 }

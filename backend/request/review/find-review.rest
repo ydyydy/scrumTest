@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:3000/reviews
-@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiJkMDM0OWQyNC00ZjFmLTQzZTAtODgwNi01MzQyZDY2MzE5MmMifSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzYzNjYzMDYzLCJleHAiOjE3NjM2NjY2NjN9.lI_mKID1Zhugf03o7yijPw0QiIZ07lObdqLcaQS7Qx8
-@reviewId = 44dfbcb3-67af-4eef-b8f1-60da682ad53e
-@userId = 708a95c8-9f2b-4e83-9adf-7dd17fb2e21c
+@userToken = token
+@reviewId = reviewId
+@userId = userId
 ### Find Review by User
 GET {{baseUrl}}/user/{{userId}}
 Content-Type: application/json

@@ -154,11 +154,14 @@ export class ReviewServiceImpl implements ReviewService {
     // Actualizar timestamp
     review.updatedAt = new Date();
 
-    // Guardar cambios
     await this.reviewRepository.updateReview(review);
   }
 
   async deleteReview(id: string): Promise<void> {
     return this.reviewRepository.delete(id);
+  }
+
+  async deleteReviewByUser(userId: string): Promise<void> {
+    return this.reviewRepository.deleteByUserId(userId);
   }
 }

@@ -14,11 +14,7 @@ export abstract class ExamService {
 
   abstract deleteExam(id: string): Promise<void>;
 
-  abstract saveUserAnswer(
-    examId: string,
-    questionId: string,
-    userAnswerIds: string[],
-  ): Promise<Exam>;
+  abstract deleteAllExamsOfUser(userId: string): Promise<void>;
 
   abstract finishExam(examId: string): Promise<Exam>;
 
@@ -31,4 +27,10 @@ export abstract class ExamService {
     page: number,
     limit: number,
   ): Promise<PaginatedResponseDto<ExamHistoryItemDto>>;
+
+  abstract saveUserAnswer(
+    examId: string,
+    questionId: string,
+    userAnswerIds: string[],
+  ): Promise<Exam>;
 }

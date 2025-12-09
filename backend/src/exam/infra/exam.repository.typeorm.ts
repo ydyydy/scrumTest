@@ -77,4 +77,8 @@ export class ExamRepositoryTypeOrm extends ExamRepository {
   async delete(id: string): Promise<void> {
     await this.examRepository.delete(id);
   }
+
+  async deleteAllByUserId(userId: string): Promise<void> {
+    await this.examRepository.delete({ userId });
+  }
 }

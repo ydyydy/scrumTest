@@ -210,3 +210,20 @@ export async function deleteExam(examId: string, token: string): Promise<void> {
     throw new Error(err);
   }
 }
+
+export async function deleteAllExamsOfUser(
+  userId: string,
+  token: string
+): Promise<void> {
+  const res = await fetch(`${API_URL}/user/${userId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await safeParseError(res);
+    throw new Error(err);
+  }
+}

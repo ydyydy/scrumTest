@@ -11,4 +11,6 @@ export abstract class ReviewRepository extends Repository<Domain.Review> {
   abstract addQuestionToReviews(questionId: string): Promise<void>;
 
   abstract delete(id: string): Promise<void>;
+
+  abstract deleteByUserId(userId: string): Promise<void>;
 }

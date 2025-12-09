@@ -13,9 +13,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getUsers, deleteUser, updateUser } from "../services/user.service";
 import { ScrumPagination } from "../components/ScrumPagination";
-import { deleteReview } from "../services/review.service";
-import { deleteQuestion } from "../services/question.service";
-import { deleteExam } from "../services/exam.service";
+import { deleteReviewByUser } from "../services/review.service";
+import { deleteAllExamsOfUser } from "../services/exam.service";
 
 interface User {
   id: string;
@@ -58,16 +57,15 @@ export function ManageUsers() {
     fetchUsers();
   }, [page, token]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (userId: string) => {
     if (!token) return;
     const confirmed = window.confirm("¿Estás seguro de eliminar este usuario?");
     if (!confirmed) return;
 
     try {
-      await deleteReview(id, token);
-      await deleteExam(id, token);
-      await deleteQuestion(id, token);
-      await deleteUser(id, token);
+      await deleteReviewByUser(userId, token);
+      await deleteAllExamsOfUser(userId, token);
+      await deleteUser(userId, token);
       fetchUsers();
     } catch (error) {
       console.error(error);

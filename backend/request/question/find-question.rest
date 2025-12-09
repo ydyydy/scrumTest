@@ -1,8 +1,8 @@
 @baseUrl = http://localhost:3000/questions
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidmFsdWUiOiI4ZWUxMGZkNy04NGU1LTRiZWYtODdjMC05ZmU2N2ZlZjM3NzIifSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlcyI6ImFkbWluIiwiaWF0IjoxNzYxMTY2MDY4LCJleHAiOjE3NjExNjk2Njh9.QlWMaNTaxtZRGUhbognXbAISZwnidLlkoYYSHtfZiJ8
-@QUESTION_ID = ee7131e0-c78e-4fb0-99a3-ea35e3e92203
+@token = token
+@questionId = questionId
 ### find question by id
-GET {{baseUrl}}/{{QUESTION_ID}}
+GET {{baseUrl}}/{{questionId}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

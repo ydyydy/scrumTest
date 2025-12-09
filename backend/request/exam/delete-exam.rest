@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:3000/exams
+@userToken = token
+@examId = examId
+@userId = userId
+
+### delete exam (admin only)
+DELETE {{baseUrl}}/{{examId}}
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+### delete exam by user id (admin only)
+DELETE {{baseUrl}}/user/{{userId}} 
+Content-Type: application/json
+Authorization: Bearer {{userToken}}

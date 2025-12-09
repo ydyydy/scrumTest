@@ -17,4 +17,6 @@ export abstract class ExamRepository extends Repository<Domain.Exam> {
   ): Promise<[Domain.Exam[], number]>;
 
   abstract delete(id: string): Promise<void>;
+
+  abstract deleteAllByUserId(userId: string): Promise<void>;
 }
