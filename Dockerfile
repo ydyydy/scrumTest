@@ -22,6 +22,8 @@ COPY --from=build /app/backend/public ./public
 COPY --from=build /app/backend/node_modules ./node_modules
 COPY --from=build /app/backend/package*.json ./
 
+COPY backend/scrum_app.sqlite ./scrum_app.sqlite
+
 EXPOSE 3000
 
 CMD ["node", "dist/src/main.js"]
