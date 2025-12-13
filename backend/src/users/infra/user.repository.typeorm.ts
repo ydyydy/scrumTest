@@ -45,7 +45,6 @@ export class UserRepositoryTypeOrm extends UserRepository {
     page: number = PaginationDefaults.DEFAULT_PAGE,
     limit: number = PaginationDefaults.DEFAULT_LIMIT,
   ): Promise<[Domain.User[], number]> {
-    console.log('myUserId:', myUserId);
     // Obtener usuarios paginados
     const [users, total] = await this.userRepository.findAndCount({
       where: myUserId ? { id: Not(myUserId) } : undefined,

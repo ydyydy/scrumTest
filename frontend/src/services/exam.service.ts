@@ -28,7 +28,6 @@ export async function saveAnswer(
   dto: SaveAnswerDto,
   token: string
 ): Promise<Exam> {
-  console.log("Saving answer for exam:", examId, dto);
   const res = await fetch(`${API_URL}/${examId}/answer`, {
     method: "POST",
     headers: {
