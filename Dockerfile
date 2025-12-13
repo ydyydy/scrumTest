@@ -1,35 +1,34 @@
 # Imagen base
 FROM node:18-alpine
 
+# Instalar herramientas de compilación
+RUN apk add --no-cache python3 make g++ bash
+
 # Crear directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias del backend
+# Backend
 COPY backend/package*.json ./backend/
 RUN cd backend && npm install
-
-# Copiar backend
 COPY backend/ ./backend/
 
-# Instalar dependencias del frontend
+# Frontend
 COPY frontend/package*.json ./frontend/
 RUN cd frontend && npm install
-
-# Copiar frontend
 COPY frontend/ ./frontend/
 
-# Construir frontend (React)
+# Build de React
 RUN cd frontend && npm run build
 
-# Copiar build de React al backend/public
+# Copiar build al backend/public
 RUN cp -r frontend/build backend/public
 
-# Construir backend (NestJS)
+# Build de backend (NestJS)
 RUN cd backend && npm run build
 
 # Exponer puerto
 EXPOSE 3000
 
-# Comando para iniciar backend
+# Comando de inicio
 WORKDIR /app/backend
 CMD ["node", "dist/main.js"]
