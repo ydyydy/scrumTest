@@ -1,26 +1,33 @@
-# 1️⃣ Imagen base
-FROM node:18-alpine
+# ---------- Stage 1: Build ----------
+FROM node:18-alpine AS build
 
-# 2️⃣ Instalar herramientas necesarias para build
+# Herramientas necesarias para build
 RUN apk add --no-cache python3 make g++ bash
 
-# 3️⃣ Crear directorio de trabajo
 WORKDIR /app
 
-# 4️⃣ Copiar backend completo y build
+# ---------------- Backend ----------------
 COPY backend/ ./backend/
 RUN cd backend && npm install && npm run build
 
-# 5️⃣ Copiar frontend completo y build
+# ---------------- Frontend ----------------
 COPY frontend/ ./frontend/
 RUN cd frontend && npm install && npm run build
 
-# 6️⃣ Copiar build de React a backend/public
+# Copiar build de React a backend/public
 RUN mkdir -p backend/public && cp -r frontend/dist/* backend/public/
 
-# 7️⃣ Exponer puerto
+# ---------- Stage 2: Production ----------
+FROM node:18-alpine
+
+WORKDIR /app/backend
+
+# Copiar solo lo necesario desde build stage
+COPY --from=build /app/backend/dist ./dist
+COPY --from=build /app/backend/package*.json ./
+COPY --from=build /app/backend/public ./public
+COPY --from=build /app/backend/node_modules ./node_modules
+
 EXPOSE 3000
 
-# 8️⃣ Comando de inicio
-WORKDIR /app/backend
 CMD ["node", "dist/main.js"]
