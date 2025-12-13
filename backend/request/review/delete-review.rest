@@ -12,3 +12,4 @@ Authorization: Bearer {{adminToken}}
 DELETE {{baseUrl}}/user/{{userId}}
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
+

@@ -25,7 +25,6 @@ export function ScrumTestNavbar() {
           ScrumTest
         </Navbar.Brand>
 
-        {/* ⭐ Home al lado del logo */}
         <Nav className="ms-2">
           <Nav.Link
             as={NavLink}
@@ -33,7 +32,7 @@ export function ScrumTestNavbar() {
             className="text-light"
             style={{ padding: "0.5rem 1rem" }}
           >
-            Home
+            Inicio
           </Nav.Link>
         </Nav>
 
@@ -43,7 +42,7 @@ export function ScrumTestNavbar() {
         {/* Menú colapsable */}
         <Navbar.Collapse id="navbar-nav">
           <Nav className="ms-auto">
-            {/* Si NO está logueado → Mostrar solo Login/Register */}
+            {/* Si NO está logueado → Mostrar solo Login y Register */}
             {!isLoggedIn && (
               <>
                 <Nav.Link

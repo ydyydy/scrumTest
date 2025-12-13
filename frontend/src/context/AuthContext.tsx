@@ -6,11 +6,12 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface User {
   sub: { value: string };
   email: string;
-  roles: string; // ahora puede ser "admin" o "user"
+  roles: string[] | string;
   username: string;
 }
 
@@ -25,7 +26,7 @@ interface AuthContextType {
   setUser?: (user: User) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,36 +34,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | undefined>();
   const [token, setToken] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  // Función para determinar si el usuario es admin
+  const detectAdmin = (roles: string[] | string): boolean => {
+    const roleList = Array.isArray(roles) ? roles : [roles];
+    return roleList.map((r) => r.toLowerCase()).includes("admin");
+  };
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
+
     if (savedToken) {
       try {
-        const decoded: User = jwtDecode(savedToken) as User;
+        const decoded = jwtDecode<User>(savedToken);
 
         setUser(decoded);
         setToken(savedToken);
         setIsLoggedIn(true);
-        setIsAdmin(decoded.roles?.toLowerCase() === "admin");
+        setIsAdmin(detectAdmin(decoded.roles));
       } catch (error) {
-        console.error("Token inválido", error);
+        console.error("Invalid token", error);
         localStorage.removeItem("token");
       }
     }
+
     setLoading(false);
   }, []);
 
   const login = (newToken: string) => {
     try {
-      const decoded: User = jwtDecode(newToken) as User;
+      const decoded = jwtDecode<User>(newToken);
 
       setUser(decoded);
       setToken(newToken);
       setIsLoggedIn(true);
-      setIsAdmin(decoded.roles?.toLowerCase() === "admin");
+      setIsAdmin(detectAdmin(decoded.roles));
       localStorage.setItem("token", newToken);
     } catch (error) {
-      console.error("Error al decodificar token", error);
+      console.error("Decoded error", error);
     }
   };
 
@@ -72,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoggedIn(false);
     setIsAdmin(false);
     localStorage.removeItem("token");
+    navigate("/home");
   };
 
   return (
@@ -94,6 +104,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth debe usarse dentro de AuthProvider");
+  if (!context) {
+    throw new Error("useAuth debe usarse dentro de AuthProvider");
+  }
   return context;
 }

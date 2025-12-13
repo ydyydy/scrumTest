@@ -1,4 +1,5 @@
 import { createUserDTO } from "../utils/domain.utils";
+import { safeParseError } from "../utils/error-parser";
 
 const API_URL = "http://localhost:3000/users";
 
@@ -12,8 +13,8 @@ export async function registerUser(data: createUserDTO): Promise<void> {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Error during registration");
+    const err = await safeParseError(response);
+    throw new Error(err);
   }
 }
 
@@ -30,36 +31,34 @@ export async function loginUser(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Error during login");
+    const err = await safeParseError(response);
+    throw new Error(err);
   }
 
   const data = await response.json();
-  return data.access_token; // un simple string
+  return data.access_token;
 }
 
-// Obtener perfil de usuario
 export async function getUserProfile(
-  id: string
+  id: string,
+  token: string
 ): Promise<{ id: string; email: string; username: string }> {
-  console.log("Fetching user profile for ID:", id);
   const response = await fetch(`${API_URL}/${id}`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Error fetching user profile");
+    const err = await safeParseError(response);
+    throw new Error(err);
   }
 
   const data = await response.json();
   return data;
 }
 
-// Actualizar usuario
 export async function updateUser(
   id: string,
   payload: Partial<{ username: string; isAdmin: boolean }>,
@@ -75,8 +74,8 @@ export async function updateUser(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Error updating user");
+    const err = await safeParseError(response);
+    throw new Error(err);
   }
 }
 
@@ -88,7 +87,10 @@ export async function getUsers(page: number, limit: number, token: string) {
     },
   });
 
-  if (!response.ok) throw new Error("Error fetching users");
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
 
   return await response.json();
 }
@@ -103,7 +105,7 @@ export async function deleteUser(id: string, token: string): Promise<void> {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Error deleting user");
+    const err = await safeParseError(response);
+    throw new Error(err);
   }
 }

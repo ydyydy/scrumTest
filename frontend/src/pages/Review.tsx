@@ -9,38 +9,36 @@ import {
 import { getQuestion } from "../services/question.service";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
+import { ConfirmModal } from "../components/ConfirmModal";
 
 export function Review() {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, token } = useAuth();
 
   const [review, setReview] = useState<any>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [questionData, setQuestionData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // -----------------------------------------
-  // CARGAR REVIEW + PRIMERA PREGUNTA
-  // -----------------------------------------
+  const [showConfirm, setShowConfirm] = useState(false);
+
   useEffect(() => {
     if (authLoading) return;
-
-    if (!user) {
+    if (!user || !token) {
       navigate("/login");
       return;
     }
 
     async function loadReview() {
       try {
-        let reviewData = await getReviewByUser(user!.sub.value);
-
+        let reviewData = await getReviewByUser(user!.sub.value, token!);
         if (!reviewData) {
-          reviewData = await createReview(user!.sub.value);
+          reviewData = await createReview(user!.sub.value, token!);
         }
         setReview(reviewData);
 
         const firstQuestionId = reviewData.content.questions[0].questionId;
-        const question = await getQuestion(firstQuestionId);
+        const question = await getQuestion(firstQuestionId, token!);
 
         setQuestionData({
           id: question._id.value,
@@ -62,14 +60,11 @@ export function Review() {
     loadReview();
   }, [user, authLoading, navigate]);
 
-  // -----------------------------------------
-  // CAMBIAR PREGUNTA
-  // -----------------------------------------
+  // Cambiar pregunta
   const handleChangeQuestion = async (newIndex: number) => {
     setCurrentIndex(newIndex);
-
     const questionId = review.content.questions[newIndex].questionId;
-    const questionRaw = await getQuestion(questionId);
+    const questionRaw = await getQuestion(questionId, token!);
 
     setQuestionData({
       id: questionRaw._id.value,
@@ -83,12 +78,9 @@ export function Review() {
     });
   };
 
-  // -----------------------------------------
-  // SELECCIONAR RESPUESTA
-  // -----------------------------------------
+  // Seleccionar respuesta
   const handleAnswerSelect = (answerId: string) => {
     if (!review) return;
-
     const updated = { ...review };
     const q = updated.content.questions[currentIndex];
 
@@ -100,16 +92,12 @@ export function Review() {
         ? q.userAnswerIds.filter((id: string) => id !== answerId)
         : [...(q.userAnswerIds || []), answerId];
     }
-
     setReview(updated);
   };
 
-  // -----------------------------------------
-  // VALIDAR PREGUNTA
-  // -----------------------------------------
+  // Validar pregunta
   const handleValidate = async () => {
     if (!review) return;
-
     const q = review.content.questions[currentIndex];
     const selected = q.userAnswerIds;
 
@@ -119,10 +107,11 @@ export function Review() {
     }
 
     try {
-      const result = await answerQuestion(review.id.value, {
-        questionId: q.questionId,
-        userAnswerIds: selected,
-      });
+      const result = await answerQuestion(
+        review.id.value,
+        { questionId: q.questionId, userAnswerIds: selected },
+        token!
+      );
 
       const updated = { ...review };
       updated.content.questions[currentIndex].isCorrect = result.isCorrect;
@@ -134,24 +123,16 @@ export function Review() {
     }
   };
 
-  // -----------------------------------------
-  // SALIR
-  // -----------------------------------------
+  // Salir
   const handleGoBack = () => navigate("/home");
 
-  // -----------------------------------------
-  // REINICIAR
-  // -----------------------------------------
-  const handleReset = async () => {
-    if (
-      !confirm(
-        "¿Seguro que quieres reiniciar el test? Se perderán todas tus respuestas."
-      )
-    )
-      return;
+  // Abrir modal para reiniciar
+  const handleReset = () => setShowConfirm(true);
 
+  const handleConfirmReset = async () => {
+    setShowConfirm(false);
     try {
-      await resetReview(review.id.value);
+      await resetReview(review.id.value, token!);
       window.location.reload();
     } catch (err) {
       console.error(err);
@@ -159,9 +140,9 @@ export function Review() {
     }
   };
 
-  // -----------------------------------------
+  const handleCancelReset = () => setShowConfirm(false);
+
   // UI
-  // -----------------------------------------
   if (loading || !review || !questionData)
     return <div className="text-center p-5">Cargando…</div>;
 
@@ -175,7 +156,7 @@ export function Review() {
       <Row className="gx-4">
         {/* PANEL LATERAL */}
         <Col xs={12} md={3}>
-          <Card className="p-3 shadow-sm d-flex flex-column justify-content-between">
+          <Card className="p-3 shadow-sm d-flex flex-column justify-content-between exam-sidebar">
             <div>
               <div className="mb-3 text-center fw-bold">
                 {answered} / {total}
@@ -188,12 +169,10 @@ export function Review() {
                 }}
               >
                 {review.content.questions.map((q: any, index: number) => {
-                  const isAnswered = q.answered; // solo marcar después de validar
+                  const isAnswered = q.answered;
                   const isCorrect = q.isCorrect === true;
-
                   let bg = "white";
                   if (isAnswered) bg = isCorrect ? "#57cc82ff" : "#e66f6fff";
-
                   let border =
                     index === currentIndex
                       ? "2px solid #115ed8ff"
@@ -218,7 +197,6 @@ export function Review() {
               </div>
             </div>
 
-            {/* BOTÓN REINICIAR */}
             <Button
               variant="warning"
               onClick={handleReset}
@@ -231,8 +209,7 @@ export function Review() {
 
         {/* PANEL PREGUNTA */}
         <Col xs={12} md={9}>
-          <Card className="shadow-sm p-3 position-relative">
-            {/* BOTÓN SALIR EN ESQUINA SUPERIOR */}
+          <Card className="shadow-sm p-3 position-relative exam-card">
             <Button
               variant="warning"
               onClick={handleGoBack}
@@ -249,11 +226,11 @@ export function Review() {
                   <div
                     key={ans.id}
                     style={{
-                      border: "1px solid #d1d5db", // gris claro
+                      border: "1px solid #d1d5db",
                       borderRadius: "4px",
                       padding: "8px",
                       marginBottom: "6px",
-                      backgroundColor: "#f9fafb", // fondo muy suave
+                      backgroundColor: "#f9fafb",
                     }}
                   >
                     <Form.Check
@@ -272,7 +249,6 @@ export function Review() {
                 ))}
               </Form>
 
-              {/* BOTONES DE NAVEGACIÓN ABAJO */}
               <div className="d-flex justify-content-center mt-4 gap-2">
                 <div className="d-flex gap-1">
                   <Button
@@ -308,6 +284,15 @@ export function Review() {
           </Card>
         </Col>
       </Row>
+
+      {/* Modal de confirmación */}
+      <ConfirmModal
+        show={showConfirm}
+        title="Reiniciar test"
+        message="¿Seguro que quieres reiniciar el test? Se perderán todas tus respuestas."
+        onConfirm={handleConfirmReset}
+        onCancel={handleCancelReset}
+      />
     </Container>
   );
 }

@@ -1,4 +1,3 @@
-// ManageQuestions.tsx
 import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { FaTrash, FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -6,6 +5,7 @@ import { getQuestions, deleteQuestion } from "../services/question.service";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ScrumPagination } from "../components/ScrumPagination";
+import { ConfirmModal } from "../components/ConfirmModal";
 
 interface Answer {
   id: string;
@@ -28,6 +28,17 @@ export function ManageQuestions() {
   const limit = 2;
   const { token } = useAuth();
   const navigate = useNavigate();
+
+  // Estado para modal de confirmación
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
+
+  const openConfirmModal = (message: string, action: () => void) => {
+    setConfirmMessage(message);
+    setOnConfirmAction(() => action);
+    setShowConfirm(true);
+  };
 
   const loadQuestions = async () => {
     if (!token) return;
@@ -53,18 +64,18 @@ export function ManageQuestions() {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!token) return;
-    const ok = confirm("¿Seguro que deseas borrar esta pregunta?");
-    if (!ok) return;
 
-    try {
-      await deleteQuestion(id, token);
-      loadQuestions();
-    } catch (err) {
-      console.error(err);
-      alert("Error al borrar la pregunta");
-    }
+    openConfirmModal("¿Seguro que deseas borrar esta pregunta?", async () => {
+      try {
+        await deleteQuestion(id, token);
+        loadQuestions();
+      } catch (err) {
+        console.error(err);
+        alert("Error al borrar la pregunta");
+      }
+    });
   };
 
   const totalPages = Math.ceil(total / limit);
@@ -131,18 +142,28 @@ export function ManageQuestions() {
               </Card.Body>
             </Card>
           ))}
-
-          {totalPages > 1 && (
-            <div className="mt-4">
-              <ScrumPagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={(p) => setPage(p)}
-              />
-            </div>
-          )}
+          {/* Paginación */}
+          <div className="mt-4">
+            <ScrumPagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(p) => setPage(p)}
+            />
+          </div>
         </Col>
       </Row>
+
+      {/* Modal de confirmación */}
+      <ConfirmModal
+        show={showConfirm}
+        title="Confirmación"
+        message={confirmMessage}
+        onConfirm={() => {
+          setShowConfirm(false);
+          onConfirmAction();
+        }}
+        onCancel={() => setShowConfirm(false)}
+      />
     </Container>
   );
 }

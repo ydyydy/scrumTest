@@ -89,20 +89,43 @@ export class ExamServiceImpl implements ExamService {
     if (!exam) throw new NotFoundException('Exam not found');
 
     const now = new Date();
-
-    const duration =
-      exam.finishDate == null
-        ? Math.floor((now.getTime() - exam.startDate.getTime()) / 1000)
-        : exam.duration;
-
     exam.finishDate = now;
-    exam.duration = duration;
+    exam.duration = Math.floor(
+      (now.getTime() - exam.startDate.getTime()) / 1000,
+    );
 
-    // Calcular puntuación
-    const correct = exam.content.questions.filter(
-      (q) => q.isCorrect === true,
-    ).length;
-    exam.score = correct;
+    // Evaluar cada pregunta
+    const results = await Promise.all(
+      exam.content.questions.map(async (q) => {
+        const question = await this.questionRepository.findById(q.questionId);
+        if (!question) {
+          // Si no se encuentra la pregunta, marcar como incorrecta
+          return { ...q, isCorrect: false, answered: false };
+        }
+
+        const correctAnswerIds = question.answers
+          .filter((a) => a.isCorrect)
+          .map((a) => a.id.toString());
+
+        const userAnswers = q.userAnswerIds ?? [];
+
+        const isCorrect =
+          correctAnswerIds.length === userAnswers.length &&
+          correctAnswerIds.every((id) => userAnswers.includes(id));
+
+        return {
+          ...q,
+          isCorrect,
+          answered: userAnswers.length > 0,
+        };
+      }),
+    );
+
+    exam.content.questions = results;
+
+    // Calcular score sobre 100 puntos
+    const correctCount = results.filter((q) => q.isCorrect).length;
+    exam.score = Math.round((correctCount / 55) * 100);
 
     return this.examRepository.update(exam);
   }

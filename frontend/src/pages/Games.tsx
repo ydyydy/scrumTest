@@ -14,25 +14,12 @@ export function Games() {
       <Row className="justify-content-center">
         {/* Iniciar repaso */}
         <Col xs={12} md={6} lg={4} className="mb-4">
-          <Card
-            className="text-center shadow-lg hover-card"
-            style={{
-              borderRadius: "15px",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              border: "2px solid #007bff", // ← borde azul para repaso
-            }}
-          >
+          <Card className="text-center shadow-lg hover-card custom-blue-card">
             <Card.Body>
-              <div
-                style={{
-                  fontSize: "3rem",
-                  color: "#007bff",
-                  marginBottom: "10px",
-                }}
-              >
+              <div className="large-blue-title">
                 <FaBook />
               </div>
-              <Card.Title style={{ fontSize: "1.5rem", fontWeight: "600" }}>
+              <Card.Title className="custom-blue-text">
                 Iniciar repaso
               </Card.Title>
               <Card.Text>
@@ -42,7 +29,7 @@ export function Games() {
                 variant="primary"
                 size="lg"
                 onClick={handleRepaso}
-                style={{ borderRadius: "10px", padding: "0.5rem 2rem" }}
+                className="card-button-style"
               >
                 Iniciar
               </Button>
@@ -52,31 +39,12 @@ export function Games() {
 
         {/* Simulación de examen */}
         <Col xs={12} md={6} lg={4} className="mb-4">
-          <Card
-            className="text-center shadow-lg hover-card"
-            style={{
-              borderRadius: "15px",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              border: "2px solid #28a745",
-            }}
-          >
+          <Card className="text-center shadow-lg hover-card custom-green-card">
             <Card.Body>
-              <div
-                style={{
-                  fontSize: "3rem",
-                  color: "#28a745",
-                  marginBottom: "10px",
-                }}
-              >
+              <div className="large-green-title">
                 <FaClipboardCheck />
               </div>
-              <Card.Title
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  color: "#28a745",
-                }}
-              >
+              <Card.Title className="custom-green-text">
                 Simulación de examen
               </Card.Title>
               <Card.Text>
@@ -86,7 +54,7 @@ export function Games() {
                 variant="success"
                 size="lg"
                 onClick={handleExamen}
-                style={{ borderRadius: "10px", padding: "0.5rem 2rem" }}
+                className="card-button-style"
               >
                 Comenzar
               </Button>
@@ -96,33 +64,12 @@ export function Games() {
 
         {/* Ranking */}
         <Col xs={12} md={6} lg={4} className="mb-4">
-          <Card
-            className="text-center shadow-lg hover-card"
-            style={{
-              borderRadius: "15px",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              border: "2px solid #ffc107",
-            }}
-          >
+          <Card className="text-center shadow-lg hover-card custom-yellow-card">
             <Card.Body>
-              <div
-                style={{
-                  fontSize: "3rem",
-                  color: "#ffc107",
-                  marginBottom: "10px",
-                }}
-              >
+              <div className="large-yellow-title">
                 <FaTrophy />
               </div>
-              <Card.Title
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  color: "#ffc107",
-                }}
-              >
-                Ranking
-              </Card.Title>
+              <Card.Title className="custom-yellow-text">Ranking</Card.Title>
               <Card.Text>
                 Consulta los mejores jugadores y tu posición en la tabla.
               </Card.Text>
@@ -130,7 +77,7 @@ export function Games() {
                 variant="warning"
                 size="lg"
                 onClick={handleRanking}
-                style={{ borderRadius: "10px", padding: "0.5rem 2rem" }}
+                className="card-button-style"
               >
                 Ver Ranking
               </Button>
@@ -138,15 +85,6 @@ export function Games() {
           </Card>
         </Col>
       </Row>
-
-      <style>
-        {`
-          .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-          }
-        `}
-      </style>
     </Container>
   );
 }

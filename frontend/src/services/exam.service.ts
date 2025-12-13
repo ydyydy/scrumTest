@@ -1,70 +1,16 @@
-// services/exam.service.ts
+import { Exam, ExamResult, SaveAnswerDto, RankingDto } from "../utils/exam.dto";
+import { safeParseError } from "../utils/error-parser";
+
 const API_URL = "http://localhost:3000/exams";
 
-export interface ExamQuestion {
-  questionId: string;
-  userAnswerIds?: string[];
-  isCorrect?: boolean;
-  answered?: boolean;
-}
-
-export interface ExamContent {
-  questions: ExamQuestion[];
-}
-
-export interface Exam {
-  id: { value: string };
-  userId: string;
-  startDate: string;
-  finishDate: string | null;
-  duration: number | null;
-  score: number | null;
-  content: ExamContent;
-}
-
-// DTO para guardar respuesta
-export interface SaveAnswerDto {
-  questionId: string;
-  userAnswerIds: string[];
-}
-
-export interface ExamResultAnswer {
-  id: string;
-  text: string;
-}
-
-export interface ExamHistoryItemDto {
-  examId: string;
-  score: number | null;
-  duration: number | null;
-  correct: number;
-  incorrect: number;
-  finishDate: string | null;
-}
-
-export interface ExamResultQuestion {
-  questionId: string;
-  text: string;
-  answers: ExamResultAnswer[];
-  userAnswerIds: string[];
-  isCorrect: boolean;
-  answered: boolean;
-}
-
-export interface ExamResult {
-  id: string;
-  score: number | null;
-  duration: number | null;
-  questions: ExamResultQuestion[];
-}
-
-// -----------------------------------------
 // Crear un nuevo examen
-// -----------------------------------------
-export async function createExam(userId: string): Promise<Exam> {
+export async function createExam(userId: string, token: string): Promise<Exam> {
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ userId }),
   });
 
@@ -76,17 +22,19 @@ export async function createExam(userId: string): Promise<Exam> {
   return res.json() as Promise<Exam>;
 }
 
-// -----------------------------------------
 // Guardar respuesta de una pregunta
-// -----------------------------------------
 export async function saveAnswer(
   examId: string,
-  dto: SaveAnswerDto
+  dto: SaveAnswerDto,
+  token: string
 ): Promise<Exam> {
   console.log("Saving answer for exam:", examId, dto);
   const res = await fetch(`${API_URL}/${examId}/answer`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(dto),
   });
 
@@ -98,13 +46,14 @@ export async function saveAnswer(
   return res.json() as Promise<Exam>;
 }
 
-// -----------------------------------------
 // Finalizar examen
-// -----------------------------------------
-export async function finishExam(examId: string): Promise<Exam> {
+export async function finishExam(examId: string, token: string): Promise<Exam> {
   const res = await fetch(`${API_URL}/${examId}/finish`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!res.ok) {
@@ -115,55 +64,35 @@ export async function finishExam(examId: string): Promise<Exam> {
   return res.json() as Promise<Exam>;
 }
 
-// -----------------------------------------
-// Obtener examen por id (opcional)
-// -----------------------------------------
-export async function getExamById(examId: string): Promise<Exam> {
-  const res = await fetch(`${API_URL}/${examId}`);
+// Obtener resultado de examen
+export async function getExamResult(
+  examId: string,
+  token: string
+): Promise<ExamResult> {
+  const res = await fetch(`${API_URL}/${examId}/result`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (!res.ok) {
     const err = await safeParseError(res);
     throw new Error(err);
   }
-  return res.json() as Promise<Exam>;
-}
-
-// -----------------------------------------
-// Helper para errores
-// -----------------------------------------
-async function safeParseError(res: Response): Promise<string> {
-  try {
-    const data = await res.json();
-    if (data && (data.message || data.error)) return data.message || data.error;
-    return `HTTP ${res.status} ${res.statusText}`;
-  } catch {
-    return `HTTP ${res.status} ${res.statusText}`;
-  }
-}
-
-/**
- * Obtener resultado de examen
- */
-export async function getExamResult(examId: string): Promise<ExamResult> {
-  const res = await fetch(`${API_URL}/${examId}/result`);
-  if (!res.ok) {
-    throw new Error(`Error fetching exam result: ${res.statusText}`);
-  }
   return res.json() as Promise<ExamResult>;
 }
 
-export interface RankingEntry {
-  username: string;
-  score: number;
-  duration: number;
-}
+export async function getTopRanking(token: string): Promise<RankingDto> {
+  const res = await fetch(`${API_URL}/ranking`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-export interface RankingDto {
-  top: RankingEntry[];
-}
+  if (!res.ok) {
+    const err = await safeParseError(res);
+    throw new Error(err);
+  }
 
-export async function getTopRanking(): Promise<RankingDto> {
-  const res = await fetch("http://localhost:3000/exams/ranking");
-  if (!res.ok) throw new Error(`Error cargando ranking: ${res.statusText}`);
   return res.json() as Promise<RankingDto>;
 }
 
@@ -173,14 +102,6 @@ export async function getUserExamHistory(
   limit: number,
   token: string
 ) {
-  console.log(
-    "Fetching exam history for userId:",
-    userId,
-    "page:",
-    page,
-    "limit:",
-    limit
-  );
   const res = await fetch(
     `${API_URL}/history/${userId}?page=${page}&limit=${limit}`,
     {
@@ -191,7 +112,8 @@ export async function getUserExamHistory(
   );
 
   if (!res.ok) {
-    throw new Error("Error cargando historial del usuario");
+    const err = await safeParseError(res);
+    throw new Error(err);
   }
 
   return res.json();

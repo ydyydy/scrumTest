@@ -1,21 +1,19 @@
+import { CreateQuestionDto } from "../utils/question.dto";
+import { safeParseError } from "../utils/error-parser";
+
 const API_URL = "http://localhost:3000/questions";
 
-export interface AnswerDto {
-  text: string;
-  isCorrect?: boolean;
-}
+export async function getQuestion(id: string, token: string) {
+  const response = await fetch(`${API_URL}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-export interface CreateQuestionDto {
-  text: string;
-  answers: AnswerDto[];
-  category: string;
-  questionType: "single" | "multiple";
-}
-
-export async function getQuestion(id: string) {
-  const response = await fetch(`${API_URL}/${id}`);
-
-  if (!response.ok) throw new Error("Error al cargar pregunta");
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
 
   return response.json();
 }
@@ -34,8 +32,8 @@ export async function createQuestion(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Error creating question");
+    const err = await safeParseError(response);
+    throw new Error(err);
   }
 }
 
@@ -46,7 +44,10 @@ export async function getQuestions(page: number, limit: number, token: string) {
     },
   });
 
-  if (!response.ok) throw new Error("Error fetching questions");
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
 
   return await response.json();
 }
@@ -59,7 +60,10 @@ export async function deleteQuestion(id: string, token: string) {
     },
   });
 
-  if (!response.ok) throw new Error("Error deleting question");
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
 
   return true;
 }

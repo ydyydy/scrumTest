@@ -4,7 +4,7 @@
 
 .global-background {
   background-color: #e9ebee;
-  min-height: 100vh;
+  min-height: 82vh;
   padding: 2rem;
 }
 
@@ -18,4 +18,232 @@
 .btn-scrum:hover {
   background-color: #d9484e; /* rojo más claro */
   border-color: #d9484e;
+}
+
+.custom-green-card {
+  border-radius: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid #28a745;
+}
+
+.custom-blue-card {
+  border-radius: "15px";
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid #007bff;
+}
+.custom-yellow-card {
+  border-radius: "15px";
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid #ffc107;
+}
+
+.custom-orange-card {
+  border-radius: "15px";
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid #ec4d0e;
+}
+
+.custom-yellow-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffc107;
+}
+
+.custom-blue-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.custom-green-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #28a745;
+}
+
+.custom-orange-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ec4d0e;
+}
+
+.large-blue-title {
+  font-size: 3rem;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.large-green-title {
+  font-size: 3rem;
+  color: #28a745;
+  margin-bottom: 10px;
+}
+
+.large-orange-title {
+  font-size: 3rem;
+  color: #ec4d0e;
+  margin-bottom: 10px;
+}
+
+.large-yellow-title {
+  font-size: 3rem;
+  color: #ffc107;
+  margin-bottom: 10px;
+}
+
+.card-button-style {
+  border-radius: 10px;
+  padding: 0.5rem 2rem;
+}
+
+.hover-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Botón flotante subir al inicio */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.exam-title {
+  margin: 0;
+}
+
+.exam-summary-card {
+  padding: 0.5rem 1rem;
+}
+
+.exam-question-card {
+  padding: 0.5rem 1rem;
+}
+
+.question-text {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.answer-item {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.answer-item.selected {
+  background-color: rgba(87, 204, 130, 0.2);
+  font-weight: 600;
+}
+
+/* ================= CONTENEDOR ================= */
+.exam-container {
+  padding: 1.5rem 0;
+}
+
+/* ================= CARD BASE ================= */
+.exam-card {
+  border: 2px solid #05b353;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+/* ================= CRONÓMETRO ================= */
+.exam-timer {
+  font-size: 1.5rem;
+  text-align: center;
+  background-color: #f8f9fa;
+  padding: 0.75rem;
+  border: 2px solid #ffc107;
+  font-weight: 600;
+}
+
+/* ================= SIDEBAR ================= */
+.exam-sidebar {
+  padding: 1rem;
+  border: 2px solid #0d6efd;
+}
+
+.exam-progress {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+/* ================= GRID DE PREGUNTAS ================= */
+.exam-question-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+/* ================= BOTÓN ÍNDICE ================= */
+.question-index {
+  font-size: 0.85rem;
+  padding: 4px 0;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #000;
+}
+
+.question-index:hover {
+  background-color: #f1f5f9;
+}
+
+.question-index.active {
+  border: 2px solid #2825ee;
+}
+
+.question-index.answered {
+  background-color: #7f7681;
+  color: #fff;
+  border: none;
+}
+
+/* ================= BOTÓN ENVIAR ================= */
+.exam-submit-button {
+  margin-top: 1rem;
+  width: 100%;
+  font-weight: 600;
+}
+
+/* ================= CARD PREGUNTA ================= */
+.exam-question-card {
+  padding: 1.25rem;
+}
+
+/* ================= RESPUESTAS ================= */
+.exam-answer {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 6px;
+  background-color: #f9fafb;
+}
+
+/* ================= NAVEGACIÓN ================= */
+.exam-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.25rem;
+}
+
+.equal-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }

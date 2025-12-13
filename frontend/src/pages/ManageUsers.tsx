@@ -1,20 +1,13 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Table,
-  Form,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getUsers, deleteUser, updateUser } from "../services/user.service";
-import { ScrumPagination } from "../components/ScrumPagination";
 import { deleteReviewByUser } from "../services/review.service";
 import { deleteAllExamsOfUser } from "../services/exam.service";
+import { ScrumPagination } from "../components/ScrumPagination";
+import { ConfirmModal } from "../components/ConfirmModal";
 
 interface User {
   id: string;
@@ -36,8 +29,18 @@ export function ManageUsers() {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
   const limit = 2;
+  const [loading, setLoading] = useState(false);
+
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
+
+  const openConfirmModal = (message: string, action: () => void) => {
+    setConfirmMessage(message);
+    setOnConfirmAction(() => action);
+    setShowConfirm(true);
+  };
 
   const fetchUsers = async () => {
     if (!token) return;
@@ -46,8 +49,8 @@ export function ManageUsers() {
       const data: PaginatedUsers = await getUsers(page, limit, token);
       setUsers(data.items);
       setTotal(Number(data.total));
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -57,106 +60,110 @@ export function ManageUsers() {
     fetchUsers();
   }, [page, token]);
 
-  const handleDelete = async (userId: string) => {
+  const handleDelete = (userId: string) => {
     if (!token) return;
-    const confirmed = window.confirm("¿Estás seguro de eliminar este usuario?");
-    if (!confirmed) return;
 
-    try {
-      await deleteReviewByUser(userId, token);
-      await deleteAllExamsOfUser(userId, token);
-      await deleteUser(userId, token);
-      fetchUsers();
-    } catch (error) {
-      console.error(error);
-    }
+    openConfirmModal("¿Estás seguro de eliminar este usuario?", async () => {
+      try {
+        await deleteReviewByUser(userId, token);
+        await deleteAllExamsOfUser(userId, token);
+        await deleteUser(userId, token);
+        fetchUsers();
+      } catch (err) {
+        console.error(err);
+      }
+    });
   };
 
-  const toggleRole = async (user: User) => {
+  const toggleRole = (user: User) => {
     if (!token) return;
-    const confirmed = window.confirm(
-      `¿Estás seguro de cambiar el rol de ${user.username}?`
-    );
-    if (!confirmed) return;
 
-    try {
-      await updateUser(user.id, { isAdmin: !user.role }, token);
-      fetchUsers();
-    } catch (error) {
-      console.error(error);
-    }
+    openConfirmModal(
+      `¿Estás seguro de cambiar el rol de ${user.username}?`,
+      async () => {
+        try {
+          await updateUser(user.id, { isAdmin: !user.role }, token);
+          fetchUsers();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    );
   };
 
   return (
     <Container className="py-5">
-      <Row className="justify-content-center">
+      <Row className="justify-content-center mb-3">
         <Col xs={12} md={10}>
-          <Card className="shadow-sm">
-            <Card.Body>
-              <h2 className="mb-4 text-center">Administrar Usuarios</h2>
+          <div className="d-flex justify-content-between align-items-start mb-3">
+            <h2>Administrar Usuarios</h2>
+            <Button variant="primary" onClick={() => navigate("/home")}>
+              Volver
+            </Button>
+          </div>
 
-              {loading ? (
-                <div className="d-flex justify-content-center">
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Cargando...</span>
-                  </div>
-                </div>
-              ) : (
-                <Table striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th>Username</th>
-                      <th>Email</th>
-                      <th>Rol</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.map((user) => (
-                      <tr key={user.id}>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
-                        <td>
-                          <Form.Check
-                            type="switch"
-                            id={`role-switch-${user.id}`}
-                            label={user.role ? "Admin" : "User"}
-                            checked={user.role}
-                            onChange={() => toggleRole(user)}
-                          />
-                        </td>
-                        <td>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => handleDelete(user.id)}
-                          >
-                            <FaTrash />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+          {loading ? (
+            <div className="d-flex justify-content-center">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-3">
+              {users.length === 0 && (
+                <p className="text-center">No hay usuarios disponibles.</p>
               )}
 
-              <div className="d-flex justify-content-between align-items-center mt-3">
-                {/* Botón Volver al extremo izquierdo */}
-                <Button variant="primary" onClick={() => navigate("/home")}>
-                  Volver
-                </Button>
+              {users.map((user) => (
+                <Card key={user.id} className="shadow-sm">
+                  <Card.Body className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5>{user.username}</h5>
+                      <p className="mb-1">{user.email}</p>
+                      <Form.Check
+                        type="switch"
+                        id={`role-switch-${user.id}`}
+                        label={user.role ? "Admin" : "User"}
+                        checked={user.role}
+                        onChange={() => toggleRole(user)}
+                      />
+                    </div>
 
-                {/* Paginación al extremo derecho usando ScrumPagination */}
-                <ScrumPagination
-                  currentPage={page}
-                  totalPages={Math.ceil(total / limit)}
-                  onPageChange={(p) => setPage(p)}
-                />
-              </div>
-            </Card.Body>
-          </Card>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => handleDelete(user.id)}
+                    >
+                      <FaTrash /> Eliminar
+                    </Button>
+                  </Card.Body>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Paginación */}
+          <div className="d-flex justify-content-center mt-4">
+            <ScrumPagination
+              currentPage={page}
+              totalPages={Math.ceil(total / limit)}
+              onPageChange={(p) => setPage(p)}
+            />
+          </div>
         </Col>
       </Row>
+
+      {/* Modal de confirmación */}
+      <ConfirmModal
+        show={showConfirm}
+        title="Confirmación"
+        message={confirmMessage}
+        onConfirm={() => {
+          setShowConfirm(false);
+          onConfirmAction();
+        }}
+        onCancel={() => setShowConfirm(false)}
+      />
     </Container>
   );
 }

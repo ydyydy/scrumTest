@@ -9,20 +9,27 @@ import {
   ListGroup,
   Button,
 } from "react-bootstrap";
-import { getExamResult, ExamResult } from "../services/exam.service";
+import { getExamResult } from "../services/exam.service";
+import { ExamResult } from "../utils/exam.dto";
+import { useAuth } from "../context/AuthContext";
 
 export function ExamResultPage() {
   const { examId } = useParams<{ examId: string }>();
+  const { token } = useAuth();
   const navigate = useNavigate();
+
   const [result, setResult] = useState<ExamResult | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
     if (!examId) return;
 
     async function loadResult() {
       try {
-        const data = await getExamResult(examId!);
+        const data = await getExamResult(examId!, token!);
         setResult(data);
       } catch (err) {
         console.error(err);
@@ -34,7 +41,7 @@ export function ExamResultPage() {
     }
 
     loadResult();
-  }, [examId, navigate]);
+  }, [examId, navigate, token]);
 
   const handleScrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -50,26 +57,14 @@ export function ExamResultPage() {
       <Button
         variant="primary"
         onClick={handleScrollTop}
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          zIndex: 1000,
-          borderRadius: "50%",
-          width: "40px",
-          height: "40px",
-          padding: 0,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+        className="scroll-top-btn"
       >
         ↑
       </Button>
 
       <Row className="mb-3 align-items-center">
         <Col>
-          <h3 style={{ margin: 0 }}>Resultado del examen</h3>
+          <h3 className="exam-title">Resultado del examen</h3>
         </Col>
         <Col className="text-end">
           <Button variant="warning" size="sm" onClick={() => navigate("/home")}>
@@ -78,7 +73,7 @@ export function ExamResultPage() {
         </Col>
       </Row>
 
-      <Card className="mb-3 p-2">
+      <Card className="mb-3 exam-summary-card">
         <Row>
           <Col>
             <strong>Puntuación:</strong> {result.score} puntos
@@ -90,8 +85,8 @@ export function ExamResultPage() {
       </Card>
 
       {result.questions.map((q, idx) => (
-        <Card key={q.questionId} className="mb-2 p-2">
-          <h6 className="mb-2" style={{ fontSize: "0.95rem" }}>
+        <Card key={q.questionId} className="mb-2 exam-question-card">
+          <h6 className="question-text">
             {idx + 1}. {q.text}{" "}
             <Badge bg={q.isCorrect ? "success" : "danger"} pill>
               {q.isCorrect ? "Correcta" : "Incorrecta"}
@@ -103,14 +98,7 @@ export function ExamResultPage() {
               return (
                 <ListGroup.Item
                   key={a.id}
-                  className={selected ? "fw-bold" : ""}
-                  style={{
-                    backgroundColor: selected
-                      ? "rgba(87, 204, 130, 0.2)"
-                      : undefined,
-                    padding: "4px 8px",
-                    fontSize: "0.85rem",
-                  }}
+                  className={`answer-item ${selected ? "selected" : ""}`}
                 >
                   {a.text}
                 </ListGroup.Item>

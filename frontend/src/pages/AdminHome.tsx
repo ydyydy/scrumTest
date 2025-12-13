@@ -1,6 +1,11 @@
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { FaPlusCircle, FaClipboardList, FaUsers } from "react-icons/fa";
+import {
+  FaPlusCircle,
+  FaClipboardList,
+  FaUsers,
+  FaTrophy,
+} from "react-icons/fa";
 
 export function AdminHome() {
   const navigate = useNavigate();
@@ -8,41 +13,31 @@ export function AdminHome() {
   const handleCreateQuestion = () => navigate("/create-question");
   const handleManageQuestions = () => navigate("/manage-questions");
   const handleManageUsers = () => navigate("/manage-users");
+  const handleRanking = () => navigate("/games/ranking");
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
+    <Container className="py-4 global-background">
+      <Row className="justify-content-center g-4">
         {/* Crear Pregunta */}
-        <Col xs={12} md={6} lg={4} className="mb-4">
-          <Card
-            className="text-center shadow-lg hover-card"
-            style={{
-              borderRadius: "15px",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              border: "2px solid #007bff",
-            }}
-          >
-            <Card.Body>
-              <div
-                style={{
-                  fontSize: "3rem",
-                  color: "#007bff",
-                  marginBottom: "10px",
-                }}
-              >
-                <FaPlusCircle />
+        <Col xs={12} sm={6} md={4} lg={3}>
+          <Card className="text-center shadow-lg hover-card custom-blue-card equal-card">
+            <Card.Body className="d-flex flex-column justify-content-between h-100">
+              <div>
+                <div className="large-blue-title">
+                  <FaPlusCircle />
+                </div>
+                <Card.Title className="custom-blue-text">
+                  Crear Pregunta
+                </Card.Title>
+                <Card.Text>
+                  Accede al formulario para añadir nuevas preguntas al sistema.
+                </Card.Text>
               </div>
-              <Card.Title style={{ fontSize: "1.5rem", fontWeight: "600" }}>
-                Crear Pregunta
-              </Card.Title>
-              <Card.Text>
-                Accede al formulario para añadir nuevas preguntas al sistema.
-              </Card.Text>
               <Button
                 variant="primary"
                 size="lg"
                 onClick={handleCreateQuestion}
-                style={{ borderRadius: "10px", padding: "0.5rem 2rem" }}
+                className="card-button-style mt-2"
               >
                 Ir a Crear
               </Button>
@@ -51,42 +46,26 @@ export function AdminHome() {
         </Col>
 
         {/* Administrar Preguntas */}
-        <Col xs={12} md={6} lg={4} className="mb-4">
-          <Card
-            className="text-center shadow-lg hover-card"
-            style={{
-              borderRadius: "15px",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              border: "2px solid #28a745",
-            }}
-          >
-            <Card.Body>
-              <div
-                style={{
-                  fontSize: "3rem",
-                  color: "#28a745",
-                  marginBottom: "10px",
-                }}
-              >
-                <FaClipboardList />
+        <Col xs={12} sm={6} md={4} lg={3}>
+          <Card className="text-center shadow-lg hover-card custom-green-card equal-card">
+            <Card.Body className="d-flex flex-column justify-content-between h-100">
+              <div>
+                <div className="large-green-title">
+                  <FaClipboardList />
+                </div>
+                <Card.Title className="custom-green-text">
+                  Administrar Preguntas
+                </Card.Title>
+                <Card.Text>
+                  Edita o elimina preguntas existentes y revisa sus
+                  estadísticas.
+                </Card.Text>
               </div>
-              <Card.Title
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  color: "#28a745",
-                }}
-              >
-                Administrar Preguntas
-              </Card.Title>
-              <Card.Text>
-                Edita o elimina preguntas existentes y revisa sus estadísticas.
-              </Card.Text>
               <Button
                 variant="success"
                 size="lg"
                 onClick={handleManageQuestions}
-                style={{ borderRadius: "10px", padding: "0.5rem 2rem" }}
+                className="card-button-style mt-2"
               >
                 Ir a Administrar
               </Button>
@@ -95,58 +74,57 @@ export function AdminHome() {
         </Col>
 
         {/* Administrar Usuarios */}
-        <Col xs={12} md={6} lg={4} className="mb-4">
-          <Card
-            className="text-center shadow-lg hover-card"
-            style={{
-              borderRadius: "15px",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              border: "2px solid #ffc107",
-            }}
-          >
-            <Card.Body>
-              <div
-                style={{
-                  fontSize: "3rem",
-                  color: "#ffc107",
-                  marginBottom: "10px",
-                }}
-              >
-                <FaUsers />
+        <Col xs={12} sm={6} md={4} lg={3}>
+          <Card className="text-center shadow-lg hover-card custom-orange-card equal-card">
+            <Card.Body className="d-flex flex-column justify-content-between h-100">
+              <div>
+                <div className="large-orange-title">
+                  <FaUsers />
+                </div>
+                <Card.Title className="custom-orange-text">
+                  Administrar Usuarios
+                </Card.Title>
+                <Card.Text>
+                  Gestiona usuarios, roles y controla el acceso al sistema.
+                </Card.Text>
               </div>
-              <Card.Title
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  color: "#ffc107",
-                }}
-              >
-                Administrar Usuarios
-              </Card.Title>
-              <Card.Text>
-                Gestiona usuarios, roles y controla el acceso al sistema.
-              </Card.Text>
               <Button
-                variant="warning"
+                variant="danger"
                 size="lg"
                 onClick={handleManageUsers}
-                style={{ borderRadius: "10px", padding: "0.5rem 2rem" }}
+                className="card-button-style mt-2"
               >
                 Ir a Usuarios
               </Button>
             </Card.Body>
           </Card>
         </Col>
-      </Row>
 
-      <style>
-        {`
-          .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-          }
-        `}
-      </style>
+        {/* Ranking */}
+        <Col xs={12} sm={6} md={4} lg={3}>
+          <Card className="text-center shadow-lg hover-card custom-yellow-card equal-card">
+            <Card.Body className="d-flex flex-column justify-content-between h-100">
+              <div>
+                <div className="large-yellow-title">
+                  <FaTrophy />
+                </div>
+                <Card.Title className="custom-yellow-text">Ranking</Card.Title>
+                <Card.Text>
+                  Consulta los mejores jugadores y tu posición en la tabla.
+                </Card.Text>
+              </div>
+              <Button
+                variant="warning"
+                size="lg"
+                onClick={handleRanking}
+                className="card-button-style mt-2"
+              >
+                Ver Ranking
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }

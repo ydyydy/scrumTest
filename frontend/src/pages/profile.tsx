@@ -13,15 +13,13 @@ import { useNavigate } from "react-router-dom";
 import { FaEdit, FaSave } from "react-icons/fa";
 import { MessageBox } from "../components/MessageBox";
 import { getUserProfile, updateUser } from "../services/user.service";
-import {
-  ExamHistoryItemDto,
-  getUserExamHistory,
-} from "../services/exam.service";
+import { getUserExamHistory } from "../services/exam.service";
 import { useAuth } from "../context/AuthContext";
 import { ScrumPagination } from "../components/ScrumPagination";
+import { ExamHistoryItemDto } from "../utils/exam.dto";
 
 export function UserProfile() {
-  const { user, setUser, token } = useAuth();
+  const { user, setUser, token, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState(user?.username || "");
@@ -39,12 +37,12 @@ export function UserProfile() {
   // Cargar perfil
   useEffect(() => {
     async function fetchUser() {
-      if (!user) {
+      if (!user || !token) {
         navigate("/login");
         return;
       }
       try {
-        const profile = await getUserProfile(user!.sub.value);
+        const profile = await getUserProfile(user!.sub.value, token!);
         setUsername(profile.username);
       } catch (error) {
         setMessage(
@@ -57,7 +55,7 @@ export function UserProfile() {
     fetchUser();
   }, [user]);
 
-  // Cargar historial
+  // Cargar historial SOLO si NO es administrador
   useEffect(() => {
     async function loadHistory() {
       if (!token) return;
@@ -149,58 +147,64 @@ export function UserProfile() {
                 </Button>
               </InputGroup>
 
-              {/* HISTORIAL */}
-              <h4 className="mb-3 text-center">Historial de Exámenes</h4>
-              {history.length === 0 && (
-                <p className="text-center text-muted">Sin exámenes todavía</p>
+              {/* HISTORIAL SOLO SI NO ES ADMIN */}
+              {!isAdmin && (
+                <>
+                  <h4 className="mb-3 text-center">Historial de Exámenes</h4>
+                  {history.length === 0 && (
+                    <p className="text-center text-muted">
+                      Sin exámenes todavía
+                    </p>
+                  )}
+
+                  {/* Encabezado */}
+                  <Row
+                    className="align-items-center text-center mb-2 p-2 fw-bold"
+                    style={{
+                      borderRadius: "12px",
+                      backgroundColor: "#e9ecef",
+                    }}
+                  >
+                    <Col>Fecha</Col>
+                    <Col>Puntuación</Col>
+                    <Col>Correctas</Col>
+                    <Col>Incorrectas</Col>
+                    <Col>Duración</Col>
+                  </Row>
+
+                  {/* Filas de examen */}
+                  {history.map((item) => (
+                    <Row
+                      key={item.examId}
+                      className="align-items-center text-center mb-2 p-2 shadow-sm"
+                      style={{
+                        borderRadius: "12px",
+                        backgroundColor: "#f8f9fa",
+                      }}
+                    >
+                      <Col>
+                        {item.finishDate
+                          ? new Date(item.finishDate).toLocaleDateString()
+                          : "--:--"}
+                      </Col>
+                      <Col>
+                        <Badge bg={item.score! > 0 ? "success" : "secondary"}>
+                          {item.score ?? 0}
+                        </Badge>
+                      </Col>
+                      <Col>{item.correct}</Col>
+                      <Col>{item.incorrect}</Col>
+                      <Col>{formatDuration(item.duration)}</Col>
+                    </Row>
+                  ))}
+                  {/* PAGINACIÓN */}
+                  <ScrumPagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={(p) => setPage(p)}
+                  />
+                </>
               )}
-
-              {/* Encabezado */}
-              <Row
-                className="align-items-center text-center mb-2 p-2 fw-bold"
-                style={{
-                  borderRadius: "12px",
-                  backgroundColor: "#e9ecef",
-                }}
-              >
-                <Col>Fecha</Col>
-                <Col>Puntuación</Col>
-                <Col>Correctas</Col>
-                <Col>Incorrectas</Col>
-                <Col>Duración</Col>
-              </Row>
-
-              {/* Filas de examen */}
-              {history.map((item) => (
-                <Row
-                  key={item.examId}
-                  className="align-items-center text-center mb-2 p-2 shadow-sm"
-                  style={{
-                    borderRadius: "12px",
-                    backgroundColor: "#f8f9fa",
-                  }}
-                >
-                  <Col>
-                    {item.finishDate
-                      ? new Date(item.finishDate).toLocaleDateString()
-                      : "--:--"}
-                  </Col>
-                  <Col>
-                    <Badge bg={item.score! > 0 ? "success" : "secondary"}>
-                      {item.score ?? 0}
-                    </Badge>
-                  </Col>
-                  <Col>{item.correct}</Col>
-                  <Col>{item.incorrect}</Col>
-                  <Col>{formatDuration(item.duration)}</Col>
-                </Row>
-              ))}
-              {/* PAGINACIÓN */}
-              <ScrumPagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={(p) => setPage(p)}
-              />
             </Card.Body>
           </Card>
         </Col>

@@ -1,19 +1,25 @@
-// src/pages/RankingPage.tsx
 import { useEffect, useState } from "react";
 import { Container, Table, Button } from "react-bootstrap";
-import { getTopRanking, RankingEntry } from "../services/exam.service";
+import { getTopRanking } from "../services/exam.service";
+import { RankingEntry } from "../utils/exam.dto";
 import { FaMedal, FaTrophy } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export function Ranking() {
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { token } = useAuth();
 
   useEffect(() => {
     async function loadRanking() {
+      if (!token) {
+        navigate("/login");
+      }
+
       try {
-        const data = await getTopRanking();
+        const data = await getTopRanking(token!);
         setRanking(data.top);
       } catch (err) {
         console.error(err);

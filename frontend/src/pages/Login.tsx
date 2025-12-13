@@ -17,7 +17,6 @@ export function Login() {
   const navigate = useNavigate();
   const emailRef = useRef(null);
   const { login } = useAuth();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
