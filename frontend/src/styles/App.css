@@ -4,7 +4,7 @@
 
 .global-background {
   background-color: #e9ebee;
-  min-height: 82vh;
+  min-height: 100vh;
   padding: 2rem;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .btn-scrum:hover {
-  background-color: #d9484e; /* rojo más claro */
+  background-color: #d9484e;
   border-color: #d9484e;
 }
 
