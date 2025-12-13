@@ -1,42 +1,27 @@
-# Etapa 1: build
+# ---------- Stage 1: Build ----------
 FROM node:18-alpine AS build
 
+RUN apk add --no-cache python3 make g++ bash
 WORKDIR /app
 
-# Backend dependencies
-COPY backend/package*.json ./backend/
-RUN cd backend && npm install
-
-# Backend code
+# Backend
 COPY backend/ ./backend/
+RUN cd backend && npm install && npm run build
 
-# Frontend dependencies
-COPY frontend/package*.json ./frontend/
-RUN cd frontend && npm install
-
-# Frontend code
+# Frontend
 COPY frontend/ ./frontend/
-
-# Build frontend
-RUN cd frontend && npm run build
-
-# Crear carpeta public y copiar build del frontend
+RUN cd frontend && npm install && npm run build
 RUN mkdir -p backend/public && cp -r frontend/dist/* backend/public/
 
-# Etapa 2: final
+# ---------- Stage 2: Runtime ----------
 FROM node:18-alpine
-
 WORKDIR /app/backend
 
-# Copiar backend y dependencias
 COPY --from=build /app/backend/dist ./dist
-COPY --from=build /app/backend/package*.json ./
-COPY --from=build /app/backend/node_modules ./node_modules
 COPY --from=build /app/backend/public ./public
-
-# Copiar SQLite
-COPY backend/scrum_app.sqlite ./scrum_app.sqlite
+COPY --from=build /app/backend/node_modules ./node_modules
+COPY --from=build /app/backend/package*.json ./
 
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
