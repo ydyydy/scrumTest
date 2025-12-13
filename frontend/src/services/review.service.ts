@@ -1,7 +1,7 @@
 import { AnswerQuestionDto, AnswerQuestionResult } from "../utils/review.dto";
 import { safeParseError } from "../utils/error-parser";
 
-const API_URL = "http://localhost:3000/reviews";
+const API_URL = `${import.meta.env.VITE_API_URL}/reviews`;
 
 // Obtener review existente de un usuario
 export async function getReviewByUser(userId: string, token: string) {

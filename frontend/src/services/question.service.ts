@@ -1,7 +1,7 @@
 import { CreateQuestionDto } from "../utils/question.dto";
 import { safeParseError } from "../utils/error-parser";
 
-const API_URL = "http://localhost:3000/questions";
+const API_URL = `${import.meta.env.VITE_API_URL}/questions`;
 
 export async function getQuestion(id: string, token: string) {
   const response = await fetch(`${API_URL}/${id}`, {

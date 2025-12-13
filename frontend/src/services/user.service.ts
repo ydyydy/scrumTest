@@ -1,7 +1,7 @@
 import { createUserDTO } from "../utils/domain.utils";
 import { safeParseError } from "../utils/error-parser";
 
-const API_URL = "http://localhost:3000/users";
+const API_URL = `${import.meta.env.VITE_API_URL}/users`;
 
 export async function registerUser(data: createUserDTO): Promise<void> {
   const response = await fetch(`${API_URL}`, {

@@ -1,7 +1,7 @@
 import { Exam, ExamResult, SaveAnswerDto, RankingDto } from "../utils/exam.dto";
 import { safeParseError } from "../utils/error-parser";
 
-const API_URL = "http://localhost:3000/exams";
+const API_URL = `${import.meta.env.VITE_API_URL}/exams`;
 
 // Crear un nuevo examen
 export async function createExam(userId: string, token: string): Promise<Exam> {
