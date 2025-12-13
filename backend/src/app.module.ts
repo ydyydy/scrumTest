@@ -11,7 +11,8 @@ import { ExamModule } from './exam/exam.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'scrum_app.sqlite', // Se crea automáticamente
+      database:
+        process.env.DATABASE_PATH || path.join(__dirname, 'scrum_app.sqlite'),
       entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],
       synchronize: true,
     }),
