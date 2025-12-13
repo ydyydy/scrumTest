@@ -11,14 +11,14 @@ async function bootstrap() {
   app.enableCors({
     origin: '*',
     methods: 'GET,POST,PUT,PATCH,DELETE',
-    credentials: true,
   });
 
-  // 📦 React build
-  const reactBuildPath = join(__dirname, '..', 'public');
+  const reactBuildPath = join(process.cwd(), 'public');
+
   app.use(express.static(reactBuildPath));
 
   app.use((req: Request, res: Response, next: NextFunction) => {
+    // dejar pasar API
     if (
       req.path.startsWith('/users') ||
       req.path.startsWith('/questions') ||
@@ -34,5 +34,4 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-
 bootstrap();
