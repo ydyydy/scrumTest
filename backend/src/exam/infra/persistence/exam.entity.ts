@@ -11,7 +11,7 @@ export class Exam {
   @CreateDateColumn()
   startDate: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   finishDate: Date | null;
 
   @Column({ type: 'int', nullable: true })
