@@ -25,7 +25,7 @@ export function ManageQuestions() {
   const [expanded, setExpanded] = useState<{ [id: string]: boolean }>({});
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const limit = 2;
+  const limit = 10;
   const { token } = useAuth();
   const navigate = useNavigate();
 

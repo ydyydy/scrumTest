@@ -29,7 +29,7 @@ export function ManageUsers() {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const limit = 2;
+  const limit = 10;
   const [loading, setLoading] = useState(false);
 
   const [showConfirm, setShowConfirm] = useState(false);
