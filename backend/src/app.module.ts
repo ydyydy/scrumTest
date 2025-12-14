@@ -18,7 +18,7 @@ import { envs } from './config';
         password: envs.postgresPassword,
         database: envs.postgresDb,
         autoLoadEntities: true,
-        synchronize: true, // Solo desarrollo
+        synchronize: true,
         logging: false,
         migrations: [],
         subscribers: [],

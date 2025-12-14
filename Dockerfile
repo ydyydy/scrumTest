@@ -1,5 +1,5 @@
 # ---------- Stage 1: Build ----------
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 RUN apk add --no-cache python3 make g++ bash
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN cd frontend && npm install && npm run build
 RUN mkdir -p backend/public && cp -r frontend/dist/* backend/public/
 
 # ---------- Stage 2: Runtime ----------
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app/backend
 
 COPY --from=build /app/backend/dist ./dist
