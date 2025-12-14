@@ -6,7 +6,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export interface User {
   sub: { value: string };
@@ -35,35 +35,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  // Función para determinar si el usuario es admin
+  const location = useLocation();
+
+  // Detecta si el usuario es admin
   const detectAdmin = (roles: string[] | string): boolean => {
     const roleList = Array.isArray(roles) ? roles : [roles];
     return roleList.map((r) => r.toLowerCase()).includes("admin");
   };
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
+  // Logout seguro
+  const logout = () => {
+    setUser(undefined);
+    setToken(undefined);
+    setIsLoggedIn(false);
+    setIsAdmin(false);
+    localStorage.removeItem("token");
+    navigate("/login"); // redirige al login
+  };
 
-    if (savedToken) {
-      try {
-        const decoded = jwtDecode<User>(savedToken);
-
-        setUser(decoded);
-        setToken(savedToken);
-        setIsLoggedIn(true);
-        setIsAdmin(detectAdmin(decoded.roles));
-      } catch (error) {
-        console.error("Invalid token", error);
-        localStorage.removeItem("token");
-      }
-    }
-
-    setLoading(false);
-  }, []);
-
+  // Login: guarda token y usuario
   const login = (newToken: string) => {
     try {
-      const decoded = jwtDecode<User>(newToken);
+      const decoded = jwtDecode<User & { exp: number }>(newToken);
+      const isExpired = decoded.exp * 1000 < Date.now();
+
+      if (isExpired) {
+        logout();
+        return;
+      }
 
       setUser(decoded);
       setToken(newToken);
@@ -71,18 +70,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAdmin(detectAdmin(decoded.roles));
       localStorage.setItem("token", newToken);
     } catch (error) {
-      console.error("Decoded error", error);
+      console.error("Error decoding token", error);
+      logout();
     }
   };
 
-  const logout = () => {
-    setUser(undefined);
-    setToken(undefined);
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    localStorage.removeItem("token");
-    navigate("/home");
-  };
+  // Verifica token al iniciar la app
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+
+    if (savedToken) {
+      try {
+        const decoded = jwtDecode<User & { exp: number }>(savedToken);
+        const isExpired = decoded.exp * 1000 < Date.now();
+
+        if (isExpired) {
+          logout();
+          return;
+        }
+
+        setUser(decoded);
+        setToken(savedToken);
+        setIsLoggedIn(true);
+        setIsAdmin(detectAdmin(decoded.roles));
+      } catch (error) {
+        console.error("Invalid token", error);
+        logout();
+      }
+    } else {
+      logout();
+    }
+
+    setLoading(false);
+  }, []);
+
+  // Verifica token cada vez que cambia la ruta
+  useEffect(() => {
+    if (!token) return;
+
+    try {
+      const decoded = jwtDecode<User & { exp: number }>(token);
+      const isExpired = decoded.exp * 1000 < Date.now();
+
+      if (isExpired) {
+        logout();
+      }
+    } catch {
+      logout();
+    }
+  }, [location.pathname, token]);
 
   return (
     <AuthContext.Provider

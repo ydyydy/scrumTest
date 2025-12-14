@@ -164,29 +164,41 @@ export function Exam() {
       <Row className="gx-4">
         {/* PANEL LATERAL */}
         <Col xs={12} md={3}>
-          <Card className="exam-card exam-sidebar">
-            <div className="exam-progress">
+          <Card className="exam-card exam-sidebar p-3 d-flex flex-column justify-content-between">
+            <div className="mb-3 text-center fw-bold">
               {answered} / {total}
             </div>
 
-            <div className="exam-question-grid">
-              {exam.content.questions.map((q, index) => (
-                <Button
-                  key={index}
-                  className={`question-index
-                    ${index === currentIndex ? "active" : ""}
-                    ${(q.userAnswerIds?.length ?? 0) > 0 ? "answered" : ""}
-                  `}
-                  onClick={() => handleChangeQuestion(index)}
-                >
-                  {index + 1}
-                </Button>
-              ))}
+            <div className="scroll-grid">
+              {exam.content.questions.map((q, index) => {
+                const isAnswered = (q.userAnswerIds?.length ?? 0) > 0;
+                const isCurrent = index === currentIndex;
+                let bg = isAnswered ? "#d1d5db" : "white"; // gris si contestada
+                let border = isCurrent
+                  ? "2px solid #115ed8"
+                  : "1px solid #e5e7eb"; // azul si actual
+
+                return (
+                  <Button
+                    key={index}
+                    onClick={() => handleChangeQuestion(index)}
+                    style={{
+                      backgroundColor: bg,
+                      color: bg === "white" ? "black" : "white",
+                      border,
+                      padding: "4px 0",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    {index + 1}
+                  </Button>
+                );
+              })}
             </div>
 
             <Button
               variant="success"
-              className="exam-submit-button"
+              className="mt-3 w-100"
               onClick={() => setShowConfirm(true)}
             >
               Enviar examen
@@ -198,6 +210,13 @@ export function Exam() {
         <Col xs={12} md={9}>
           <Card className="exam-card exam-question-card">
             <h4 className="mb-3">{questionData.text}</h4>
+
+            {questionData.type === "multiple" && (
+              <div className="info-question-message">
+                Pregunta de múltiple respuesta: puede haber más de una respuesta
+                correcta
+              </div>
+            )}
 
             <Form>
               {questionData.answers.map((ans: any) => (

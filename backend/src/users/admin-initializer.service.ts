@@ -1,4 +1,3 @@
-// src/users/admin-initializer.service.ts
 import {
   Injectable,
   NotFoundException,
@@ -16,7 +15,6 @@ export class AdminInitializer implements OnApplicationBootstrap {
     const adminUsername = 'Administrador';
 
     try {
-      // Intentamos obtener el usuario
       await this.usersService.getUserByEmail(adminEmail);
     } catch (error) {
       if (error instanceof NotFoundException) {

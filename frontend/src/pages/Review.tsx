@@ -161,13 +161,7 @@ export function Review() {
               <div className="mb-3 text-center fw-bold">
                 {answered} / {total}
               </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(4, 1fr)",
-                  gap: "4px",
-                }}
-              >
+              <div className="scroll-grid">
                 {review.content.questions.map((q: any, index: number) => {
                   const isAnswered = q.answered;
                   const isCorrect = q.isCorrect === true;
@@ -210,29 +204,32 @@ export function Review() {
         {/* PANEL PREGUNTA */}
         <Col xs={12} md={9}>
           <Card className="shadow-sm p-3 position-relative exam-card">
+            {/* Botón Salir ahora fuera del Card.Body */}
             <Button
               variant="warning"
               onClick={handleGoBack}
-              style={{ position: "absolute", top: "10px", right: "10px" }}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                zIndex: 10,
+              }}
             >
               Salir
             </Button>
 
-            <Card.Body>
+            <Card.Body style={{ paddingTop: "40px" }}>
               <h4 className="mb-3">{questionData.text}</h4>
 
+              {questionData.type === "multiple" && (
+                <div className="info-question-message">
+                  Pregunta de múltiple respuesta: puede haber más de una
+                  respuesta correcta
+                </div>
+              )}
               <Form>
                 {questionData.answers.map((ans: any) => (
-                  <div
-                    key={ans.id}
-                    style={{
-                      border: "1px solid #d1d5db",
-                      borderRadius: "4px",
-                      padding: "8px",
-                      marginBottom: "6px",
-                      backgroundColor: "#f9fafb",
-                    }}
-                  >
+                  <div key={ans.id} className="exam-answer">
                     <Form.Check
                       type={
                         questionData.type === "single" ? "radio" : "checkbox"
