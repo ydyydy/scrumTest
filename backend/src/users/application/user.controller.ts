@@ -67,6 +67,7 @@ export class UserController {
       id: user.id.toString(),
       email: user.email,
       username: user.username,
+      points: user.points,
     });
   }
 

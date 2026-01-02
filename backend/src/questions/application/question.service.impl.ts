@@ -46,6 +46,12 @@ export class QuestionServiceImpl implements QuestionService {
     return question;
   }
 
+  async bulkCreate(dtos: CreateQuestionDto[]): Promise<Question[]> {
+    const promises = dtos.map((dto) => this.create(dto));
+    const createdQuestions = await Promise.all(promises);
+    return createdQuestions;
+  }
+
   async delete(id: string): Promise<void> {
     await this.questionRepository.delete(id);
   }
@@ -60,5 +66,9 @@ export class QuestionServiceImpl implements QuestionService {
 
   async findById(id: string): Promise<Question> {
     return this.questionRepository.findById(id);
+  }
+
+  async countAllQuestions(): Promise<number> {
+    return this.questionRepository.countAllQuestions();
   }
 }

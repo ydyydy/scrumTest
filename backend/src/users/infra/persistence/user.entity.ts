@@ -16,4 +16,10 @@ export class User {
 
   @Column({ type: 'boolean', default: false })
   isAdmin: boolean;
+
+  @Column({
+    type: 'int',
+    default: 100,
+  })
+  points: number;
 }

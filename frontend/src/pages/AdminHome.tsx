@@ -110,7 +110,7 @@ export function AdminHome() {
                 </div>
                 <Card.Title className="custom-yellow-text">Ranking</Card.Title>
                 <Card.Text>
-                  Consulta los mejores jugadores y tu posición en la tabla.
+                  Consulta los mejores jugadores.
                 </Card.Text>
               </div>
               <Button

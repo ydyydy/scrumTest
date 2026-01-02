@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EntityNotFoundError } from 'typeorm';
 import { ExamService } from './exam.service';
 import { CreateExamDto } from '../dto/create-exam.dto';
 import { ExamRepository } from '../exam.repository';
@@ -13,6 +14,10 @@ import { RankingDto } from '../dto/ranking.dto';
 import { UserRepository } from '../../users/user.repository';
 import { PaginatedResponseDto } from '../../../common/dto/paginated-response.dto';
 import { ExamHistoryItemDto } from '../dto/exam-history.dto';
+import {
+  EXAM_BONUS_POINTS,
+  EXAM_COST_IN_POINTS,
+} from '../../../common/utils/Constants';
 
 @Injectable()
 export class ExamServiceImpl implements ExamService {
@@ -23,14 +28,54 @@ export class ExamServiceImpl implements ExamService {
   ) {}
 
   async createExam(dto: CreateExamDto): Promise<Exam> {
+    // Traer usuario
+    const user = await this.userRepository.findById(dto.userId);
+    if (!user) throw new EntityNotFoundError('User not found', dto.userId);
+
+    // Verificar si tiene suficientes puntos
+    if (user.points < EXAM_COST_IN_POINTS)
+      throw new Error('You do not have enough points to start an exam');
+
     // Traer todas las preguntas con sus respuestas
     const allQuestions =
       await this.questionRepository.findAllQuestionsWithAnswers();
 
-    // Tomar solo 55 preguntas
-    const selectedQuestions = allQuestions
-      .sort(() => Math.random() - 0.5) // mezclar aleatoriamente
-      .slice(0, 55);
+    if (allQuestions.length < 55) {
+      throw new Error(
+        `No hay suficientes preguntas para iniciar el examen. Se requieren 55, pero hay ${allQuestions.length}.`,
+      );
+    }
+
+    // Quitar 50 puntos
+    user.points -= EXAM_COST_IN_POINTS;
+    await this.userRepository.save(user);
+
+    const questionsByCategory: Record<string, typeof allQuestions> = {};
+    allQuestions.forEach((q) => {
+      if (!questionsByCategory[q.category])
+        questionsByCategory[q.category] = [];
+      questionsByCategory[q.category].push(q);
+    });
+
+    const selectedQuestions: typeof allQuestions = [];
+
+    // Tomar al menos 1 pregunta de cada categoría
+    Object.keys(questionsByCategory).forEach((category) => {
+      const questions = questionsByCategory[category];
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      selectedQuestions.push(questions[randomIndex]);
+    });
+
+    // Completar el resto aleatoriamente hasta 55 preguntas
+    const remainingQuestions = allQuestions.filter(
+      (q) => !selectedQuestions.includes(q),
+    );
+    const remainingCount = 55 - selectedQuestions.length;
+
+    const shuffledRemaining = remainingQuestions.sort(
+      () => Math.random() - 0.5,
+    );
+    selectedQuestions.push(...shuffledRemaining.slice(0, remainingCount));
 
     // Generar el content del examen
     const content: ExamContent = {
@@ -126,6 +171,14 @@ export class ExamServiceImpl implements ExamService {
     // Calcular score sobre 100 puntos
     const correctCount = results.filter((q) => q.isCorrect).length;
     exam.score = Math.round((correctCount / 55) * 100);
+
+    if (exam.score >= 90) {
+      const user = await this.userRepository.findById(exam.userId);
+      if (!user) throw new NotFoundException('User not found');
+
+      user.points = (user.points ?? 0) + EXAM_BONUS_POINTS;
+      await this.userRepository.save(user);
+    }
 
     return this.examRepository.update(exam);
   }

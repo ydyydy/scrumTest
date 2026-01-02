@@ -113,4 +113,9 @@ export class QuestionRepositoryTypeOrm extends QuestionRepository {
 
     return questionsWithAnswers;
   }
+
+  async countAllQuestions(): Promise<number> {
+    const count = await this.questionRepository.count();
+    return count;
+  }
 }

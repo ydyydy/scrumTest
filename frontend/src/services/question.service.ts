@@ -20,7 +20,7 @@ export async function getQuestion(id: string, token: string) {
 
 export async function createQuestion(
   dto: CreateQuestionDto,
-  token: string
+  token: string,
 ): Promise<void> {
   const response = await fetch(`${API_URL}`, {
     method: "POST",
@@ -66,4 +66,36 @@ export async function deleteQuestion(id: string, token: string) {
   }
 
   return true;
+}
+
+export async function getQuestionsCount(token: string): Promise<number> {
+  const response = await fetch(`${API_URL}/count`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
+  const data = await response.json();
+  return data.total;
+}
+
+export async function bulkCreateQuestions(
+  dtos: CreateQuestionDto[],
+  token: string,
+): Promise<void> {
+  const response = await fetch(`${API_URL}/import`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(dtos),
+  });
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
 }

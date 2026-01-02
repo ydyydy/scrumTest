@@ -14,4 +14,6 @@ export abstract class QuestionRepository extends Repository<Domain.Question> {
   ): Promise<[Domain.Question[], number]>;
 
   abstract findAllQuestionsWithAnswers(): Promise<Domain.Question[]>;
+
+  abstract countAllQuestions(): Promise<number>;
 }

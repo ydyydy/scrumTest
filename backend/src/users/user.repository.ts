@@ -11,4 +11,6 @@ export abstract class UserRepository extends Repository<Domain.User> {
     page?: number,
     limit?: number,
   ): Promise<[Domain.User[], number]>;
+
+  abstract findById(id: string): Promise<Domain.User>;
 }

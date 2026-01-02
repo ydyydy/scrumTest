@@ -20,7 +20,7 @@ export async function registerUser(data: createUserDTO): Promise<void> {
 
 export async function loginUser(
   email: string,
-  password: string
+  password: string,
 ): Promise<string> {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -41,8 +41,8 @@ export async function loginUser(
 
 export async function getUserProfile(
   id: string,
-  token: string
-): Promise<{ id: string; email: string; username: string }> {
+  token: string,
+): Promise<{ id: string; email: string; username: string; points: number }> {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "GET",
     headers: {
@@ -62,7 +62,7 @@ export async function getUserProfile(
 export async function updateUser(
   id: string,
   payload: Partial<{ username: string; isAdmin: boolean }>,
-  token: string
+  token: string,
 ): Promise<void> {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "PATCH",

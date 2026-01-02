@@ -6,6 +6,7 @@ export interface UserProps {
   email: string;
   username: string;
   password: UserPassword;
+  points: number;
   isAdmin: boolean;
 }
 
@@ -48,6 +49,14 @@ export class User extends EntityRoot<UserProps> {
 
   set isAdmin(isAdmin: boolean) {
     this.props.isAdmin = isAdmin;
+  }
+
+  get points(): number {
+    return this.props.points;
+  }
+
+  set points(points: number) {
+    this.props.points = points;
   }
 
   public static create(props: UserProps, id?: UniqueEntityID): User {

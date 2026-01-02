@@ -11,6 +11,7 @@ export class UserMapper {
         username: raw.username,
         password: UserPassword.fromHashedPassword(raw.password),
         isAdmin: raw.isAdmin,
+        points: raw.points || 100,
       },
       new UniqueEntityID(raw.id),
     );
@@ -24,6 +25,7 @@ export class UserMapper {
       username: user.username,
       password: user.password,
       isAdmin: user.isAdmin,
+      points: user.points,
     };
   }
 }

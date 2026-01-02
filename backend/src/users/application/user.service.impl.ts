@@ -32,6 +32,7 @@ export class UserServiceImpl implements UserService {
       password: await UserPassword.create(password),
       username,
       isAdmin,
+      points: 100,
     });
 
     const savedUser = await this.userRepository.save(user);

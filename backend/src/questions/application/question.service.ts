@@ -12,4 +12,8 @@ export abstract class QuestionService {
   ): Promise<[Question[], number]>;
 
   abstract findById(id: string): Promise<Question>;
+
+  abstract countAllQuestions(): Promise<number>;
+
+  abstract bulkCreate(dtos: CreateQuestionDto[]): Promise<Question[]>;
 }

@@ -7,5 +7,5 @@ export const envs = {
   postgresPort: parseInt(process.env.DB_PORT || '5432', 10),
   postgresUser: process.env.DB_USER || 'postgres',
   postgresPassword: process.env.DB_PASSWORD || 'admin',
-  postgresDb: process.env.DB_NAME || 'scrumtest_local',
+  postgresDb: process.env.DB_NAME || 'postgres',
 };

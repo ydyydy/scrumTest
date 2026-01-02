@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { EntityNotFoundError } from 'typeorm';
 import { ReviewService } from './review.service';
 import { ReviewRepository } from '../review.repository';
+import { UserRepository } from '../../users/user.repository';
 import { Review } from '../domain';
 import { CreateReviewDto } from '../dto/create-review.dto';
 import { UpdateReviewDto } from '../dto/update-review.dto';
@@ -14,6 +16,7 @@ export class ReviewServiceImpl implements ReviewService {
   constructor(
     private readonly reviewRepository: ReviewRepository,
     private readonly questionRepository: QuestionRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async create(dto: CreateReviewDto): Promise<Review> {
@@ -114,6 +117,14 @@ export class ReviewServiceImpl implements ReviewService {
       questionEntry.isCorrect =
         userAnswers.length === correctAnswers.length &&
         userAnswers.every((id) => correctAnswers.includes(id));
+    }
+
+    if (questionEntry.isCorrect) {
+      const user = await this.userRepository.findById(review.userId);
+      if (!user) throw new EntityNotFoundError('User not found', review.userId);
+
+      user.points += 2;
+      await this.userRepository.save(user);
     }
 
     // Actualizar timestamp

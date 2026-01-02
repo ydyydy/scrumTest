@@ -41,6 +41,22 @@ export class QuestionController {
     }
   }
 
+  @Post('import')
+  async bulkCreateQuestions(
+    @Body() dtos: CreateQuestionDto[],
+    @Res() res: Response,
+  ) {
+    try {
+      const questions = await this.questionService.bulkCreate(dtos);
+      return res.status(HttpStatus.CREATED).json({
+        total: questions.length,
+        ids: questions.map((q) => q.id.toString()),
+      });
+    } catch (err) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
+    }
+  }
+
   @Delete(':id')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
@@ -68,6 +84,19 @@ export class QuestionController {
       page,
       limit,
     );
+  }
+
+  @Get('count')
+  async getQuestionsCount(@Res() res: Response) {
+    try {
+      const total = await this.questionService.countAllQuestions();
+      return res.status(HttpStatus.OK).json({ total });
+    } catch (err) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'Error obteniendo total de preguntas',
+        error: err.message,
+      });
+    }
   }
 
   @Get(':id')

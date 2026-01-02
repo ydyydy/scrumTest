@@ -7,9 +7,10 @@ import { ReviewServiceImpl } from './application/review.service.impl';
 import { ReviewRepositoryTypeOrm } from './infra/review.repository.typeorm';
 import { Review } from './infra/persistence/review.entity';
 import { SharedModule } from '../shared/shared.module';
+import { UsersModule } from '../users/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Review]), SharedModule],
+  imports: [TypeOrmModule.forFeature([Review]), SharedModule, UsersModule],
   controllers: [ReviewController],
   providers: [
     {

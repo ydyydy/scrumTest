@@ -269,3 +269,38 @@
   overflow-y: auto;
   padding-right: 4px;
 }
+
+.medal {
+  text-align: center;
+}
+
+.medal-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: gold;
+  border: 5px solid #ffd700; /* borde más oscuro para efecto */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.medal-circle:hover {
+  transform: scale(1.1);
+}
+
+.medal-points {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.medal-label {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}

@@ -1,0 +1,6 @@
+@baseUrl = http://localhost:3000/questions
+@adminToken = token
+### Create question (admin only)
+GET {{baseUrl}}/count   
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
