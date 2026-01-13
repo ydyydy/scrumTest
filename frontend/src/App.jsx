@@ -19,17 +19,15 @@ function Layout() {
   const isExamMode = location.pathname === "/games/exam";
 
   return (
-    <>
+    <div className={`d-flex flex-column min-vh-100`}>
       {!isExamMode && <ScrumTestNavbar />}
-      <div
-        className={`global-background ${
-          isExamMode ? "min-vh-100" : "min-vh-80"
-        }`}
+      <main
+        className={`flex-grow-1 global-background ${isExamMode ? "min-vh-100" : ""}`}
       >
         <AppRoutes />
-      </div>
+      </main>
       {!isExamMode && <Footer />}
-    </>
+    </div>
   );
 }
 

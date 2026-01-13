@@ -4,8 +4,15 @@
 
 .global-background {
   background-color: #e9ebee;
-  min-height: 100vh;
+  /* Allow the main flex child to fill available area without forcing additional viewport height */
+  min-height: 100%;
   padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Ensure the footer does not shrink and stays at the bottom inside the flex layout */
+footer {
+  flex-shrink: 0;
 }
 
 .btn-scrum {
