@@ -61,4 +61,8 @@ export class UserRepositoryTypeOrm extends UserRepository {
   async delete(id: string): Promise<void> {
     await this.userRepository.delete(id);
   }
+
+  async deleteMany(ids: string[]): Promise<void> {
+    await this.userRepository.delete(ids);
+  }
 }

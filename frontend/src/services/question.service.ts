@@ -99,3 +99,19 @@ export async function bulkCreateQuestions(
     throw new Error(err);
   }
 }
+
+export async function deleteManyQuestions(ids: string[], token: string) {
+  const response = await fetch(`${API_URL}/multiple`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ ids }),
+  });
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
+  return true;
+}

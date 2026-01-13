@@ -48,6 +48,13 @@ export class UserController {
     }
   }
 
+  @Delete('multiple')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  async deleteMany(@Body('ids') ids: string[]): Promise<void> {
+    return this.usersService.deleteManyUsers(ids);
+  }
+
   @Delete(':id')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)

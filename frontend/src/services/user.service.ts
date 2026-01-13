@@ -109,3 +109,22 @@ export async function deleteUser(id: string, token: string): Promise<void> {
     throw new Error(err);
   }
 }
+
+// Eliminar múltiples usuarios
+export async function deleteManyUsers(
+  ids: string[],
+  token: string,
+): Promise<void> {
+  const response = await fetch(`${API_URL}/multiple`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ ids }),
+  });
+  if (!response.ok) {
+    const err = await safeParseError(response);
+    throw new Error(err);
+  }
+}

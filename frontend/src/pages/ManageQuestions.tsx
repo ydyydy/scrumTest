@@ -1,7 +1,7 @@
-import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, ListGroup, Form } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { FaTrash, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { getQuestions, deleteQuestion } from "../services/question.service";
+import { FaChevronDown, FaChevronUp, FaTrash } from "react-icons/fa";
+import { getQuestions, deleteManyQuestions } from "../services/question.service";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ScrumPagination } from "../components/ScrumPagination";
@@ -23,13 +23,14 @@ interface Question {
 export function ManageQuestions() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [expanded, setExpanded] = useState<{ [id: string]: boolean }>({});
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const limit = 10;
   const { token } = useAuth();
   const navigate = useNavigate();
 
-  // Estado para modal de confirmación
+  // Modal de confirmación
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
   const [onConfirmAction, setOnConfirmAction] = useState<() => void>(() => {});
@@ -50,6 +51,7 @@ export function ManageQuestions() {
       const initialExpanded: { [id: string]: boolean } = {};
       data.items.forEach((q: Question) => (initialExpanded[q.id] = false));
       setExpanded(initialExpanded);
+      setSelectedIds([]); // reset selección al recargar
     } catch (err) {
       console.error(err);
       alert("Error cargando preguntas");
@@ -64,24 +66,33 @@ export function ManageQuestions() {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleDelete = (id: string) => {
-    if (!token) return;
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
 
-    openConfirmModal("¿Seguro que deseas borrar esta pregunta?", async () => {
-      try {
-        await deleteQuestion(id, token);
-        loadQuestions();
-      } catch (err) {
-        console.error(err);
-        alert("Error al borrar la pregunta");
+  const handleDeleteSelected = () => {
+    if (!token || selectedIds.length === 0) return;
+
+    openConfirmModal(
+      `¿Seguro que deseas borrar ${selectedIds.length} preguntas seleccionadas?`,
+      async () => {
+        try {
+          await deleteManyQuestions(selectedIds, token);
+          await loadQuestions();
+        } catch (err) {
+          console.error(err);
+          alert("Error al borrar las preguntas seleccionadas");
+        }
       }
-    });
+    );
   };
 
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <Container className="py-5">
+    <Container className="py-5 position-relative">
       <Row className="justify-content-center mb-3">
         <Col
           xs={12}
@@ -104,25 +115,24 @@ export function ManageQuestions() {
           {questions.map((q) => (
             <Card key={q.id} className="mb-3 shadow-sm">
               <Card.Body>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>{q.text}</div>
-                  <div>
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => toggleExpand(q.id)}
-                    >
-                      {expanded[q.id] ? <FaChevronUp /> : <FaChevronDown />}
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      onClick={() => handleDelete(q.id)}
-                    >
-                      <FaTrash />
-                    </Button>
-                  </div>
+                <div className="d-flex align-items-center">
+                  {/* Checkbox de selección */}
+                  <Form.Check
+                    type="checkbox"
+                    checked={selectedIds.includes(q.id)}
+                    onChange={() => toggleSelect(q.id)}
+                    className="me-3"
+                  />
+
+                  <div className="flex-grow-1">{q.text}</div>
+
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() => toggleExpand(q.id)}
+                  >
+                    {expanded[q.id] ? <FaChevronUp /> : <FaChevronDown />}
+                  </Button>
                 </div>
 
                 {expanded[q.id] && (
@@ -131,9 +141,7 @@ export function ManageQuestions() {
                       <ListGroup.Item key={ans.id}>
                         {ans.text}{" "}
                         {ans.isCorrect && (
-                          <span className="text-success fw-bold">
-                            (Correcta)
-                          </span>
+                          <span className="text-success fw-bold">(Correcta)</span>
                         )}
                       </ListGroup.Item>
                     ))}
@@ -142,7 +150,7 @@ export function ManageQuestions() {
               </Card.Body>
             </Card>
           ))}
-          {/* Paginación */}
+
           <div className="mt-4">
             <ScrumPagination
               currentPage={page}
@@ -153,7 +161,19 @@ export function ManageQuestions() {
         </Col>
       </Row>
 
-      {/* Modal de confirmación */}
+      {/* Botón flotante de papelera */}
+      {selectedIds.length > 0 && (
+        <Button
+          variant="danger"
+          className="position-fixed"
+          style={{ bottom: 20, right: 20, borderRadius: "50%", padding: "12px 15px" }}
+          onClick={handleDeleteSelected}
+          title={`Borrar ${selectedIds.length} seleccionadas`}
+        >
+          <FaTrash size={20} />
+        </Button>
+      )}
+
       <ConfirmModal
         show={showConfirm}
         title="Confirmación"

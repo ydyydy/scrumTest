@@ -25,4 +25,6 @@ export abstract class UserService {
   ): Promise<[User[], number]>;
 
   abstract deleteUser(id: string): Promise<void>;
+
+  abstract deleteManyUsers(ids: string[]): Promise<void>;
 }

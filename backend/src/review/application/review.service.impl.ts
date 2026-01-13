@@ -175,4 +175,8 @@ export class ReviewServiceImpl implements ReviewService {
   async deleteReviewByUser(userId: string): Promise<void> {
     return this.reviewRepository.deleteByUserId(userId);
   }
+
+  async deleteManyByUserIds(userIds: string[]): Promise<void> {
+    return this.reviewRepository.deleteManyByUserId(userIds);
+  }
 }

@@ -81,4 +81,12 @@ export class ExamRepositoryTypeOrm extends ExamRepository {
   async deleteAllByUserId(userId: string): Promise<void> {
     await this.examRepository.delete({ userId });
   }
+
+  async deleteManyByUserIds(userIds: string[]): Promise<void> {
+    await this.examRepository
+      .createQueryBuilder()
+      .delete()
+      .where('userId IN (:...userIds)', { userIds })
+      .execute();
+  }
 }

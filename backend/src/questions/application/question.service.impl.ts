@@ -56,6 +56,10 @@ export class QuestionServiceImpl implements QuestionService {
     await this.questionRepository.delete(id);
   }
 
+  async deleteMany(ids: string[]): Promise<void> {
+    await this.questionRepository.deleteMany(ids);
+  }
+
   async findAll(page?: number, limit?: number): Promise<[Question[], number]> {
     const [questions, total] = await this.questionRepository.findQuestions(
       page,

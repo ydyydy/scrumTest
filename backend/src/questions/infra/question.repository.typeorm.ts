@@ -57,6 +57,19 @@ export class QuestionRepositoryTypeOrm extends QuestionRepository {
     await this.questionRepository.delete({ id });
   }
 
+  async deleteMany(ids: string[]): Promise<void> {
+    await this.answerRepository
+      .createQueryBuilder()
+      .delete()
+      .where('questionId IN (:...ids)', { ids })
+      .execute();
+    await this.questionRepository
+      .createQueryBuilder()
+      .delete()
+      .where('id IN (:...ids)', { ids })
+      .execute();
+  }
+
   async findById(id: string): Promise<Domain.Question> {
     const questionEntity = await this.questionRepository.findOneBy({ id });
     if (!questionEntity) {

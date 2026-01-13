@@ -284,4 +284,8 @@ export class ExamServiceImpl implements ExamService {
   async deleteAllExamsOfUser(userId: string): Promise<void> {
     await this.examRepository.deleteAllByUserId(userId);
   }
+
+  async deleteManyExamsByManyUser(userIds: string[]): Promise<void> {
+    await this.examRepository.deleteManyByUserIds(userIds);
+  }
 }

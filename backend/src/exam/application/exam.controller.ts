@@ -142,6 +142,20 @@ export class ExamController {
     }
   }
 
+  @Delete('user/multiple')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  async deleteMany(@Body('ids') ids: string[], @Res() res: Response) {
+    try {
+      await this.examService.deleteManyExamsByManyUser(ids);
+      res.status(HttpStatus.NO_CONTENT).send();
+    } catch (err) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: err.message });
+    }
+  }
+
   @Delete('user/:userId')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)

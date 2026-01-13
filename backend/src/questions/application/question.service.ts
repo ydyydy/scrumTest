@@ -6,6 +6,8 @@ export abstract class QuestionService {
 
   abstract delete(id: string): Promise<void>;
 
+  abstract deleteMany(ids: string[]): Promise<void>;
+
   abstract findAll(
     page?: number,
     limit?: number,

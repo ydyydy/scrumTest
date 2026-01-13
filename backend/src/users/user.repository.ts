@@ -4,6 +4,8 @@ import * as Domain from './domain';
 export abstract class UserRepository extends Repository<Domain.User> {
   abstract delete(id: string): Promise<void>;
 
+  abstract deleteMany(ids: string[]): Promise<void>;
+
   abstract findByEmail(email: string): Promise<Domain.User>;
 
   abstract findUsers(

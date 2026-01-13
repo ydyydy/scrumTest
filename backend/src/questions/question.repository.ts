@@ -6,6 +6,8 @@ export abstract class QuestionRepository extends Repository<Domain.Question> {
 
   abstract delete(id: string): Promise<void>;
 
+  abstract deleteMany(ids: string[]): Promise<void>;
+
   abstract findById(id: string): Promise<Domain.Question>;
 
   abstract findQuestions(

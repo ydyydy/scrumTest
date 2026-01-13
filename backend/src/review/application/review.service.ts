@@ -15,6 +15,8 @@ export abstract class ReviewService {
 
   abstract deleteReview(id: string): Promise<void>;
 
+  abstract deleteManyByUserIds(userIds: string[]): Promise<void>;
+
   abstract deleteReviewByUser(userId: string): Promise<void>;
 
   abstract answerQuestion(

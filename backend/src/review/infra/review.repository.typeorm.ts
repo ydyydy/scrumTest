@@ -91,4 +91,12 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
   async deleteByUserId(userId: string): Promise<void> {
     await this.reviewRepository.delete({ userId });
   }
+
+  async deleteManyByUserId(userIds: string[]): Promise<void> {
+    await this.reviewRepository
+      .createQueryBuilder()
+      .delete()
+      .where('userId IN (:...userIds)', { userIds })
+      .execute();
+  }
 }

@@ -80,4 +80,8 @@ export class UserServiceImpl implements UserService {
     }
     await this.userRepository.delete(id);
   }
+
+  async deleteManyUsers(ids: string[]): Promise<void> {
+    await this.userRepository.deleteMany(ids);
+  }
 }

@@ -16,6 +16,8 @@ export abstract class ExamService {
 
   abstract deleteAllExamsOfUser(userId: string): Promise<void>;
 
+  abstract deleteManyExamsByManyUser(userIds: string[]): Promise<void>;
+
   abstract finishExam(examId: string): Promise<Exam>;
 
   abstract getExamResultById(examId: string): Promise<ExamResultDto>;

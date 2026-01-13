@@ -117,6 +117,20 @@ export class ReviewController {
     }
   }
 
+  @Delete('user/multiple')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  async deleteMany(@Body('ids') ids: string[], @Res() res: Response) {
+    try {
+      await this.reviewService.deleteManyByUserIds(ids);
+      res
+        .status(HttpStatus.OK)
+        .json({ message: `Reviews with ids ${ids.join(', ')} deleted` });
+    } catch (err) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
+    }
+  }
+
   @Delete(':id')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)

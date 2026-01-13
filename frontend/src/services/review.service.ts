@@ -42,7 +42,7 @@ export async function createReview(userId: string, token: string) {
 
 export async function resetReview(
   reviewId: string,
-  token: string
+  token: string,
 ): Promise<void> {
   const res = await fetch(`${API_URL}/${reviewId}/reset`, {
     method: "POST",
@@ -61,7 +61,7 @@ export async function resetReview(
 export async function answerQuestion(
   reviewId: string,
   dto: AnswerQuestionDto,
-  token: string
+  token: string,
 ): Promise<AnswerQuestionResult> {
   const res = await fetch(`${API_URL}/${reviewId}/answer`, {
     method: "PATCH",
@@ -82,7 +82,7 @@ export async function answerQuestion(
 
 export async function deleteReview(
   reviewId: string,
-  token: string
+  token: string,
 ): Promise<void> {
   const res = await fetch(`${API_URL}/${reviewId}`, {
     method: "DELETE",
@@ -99,7 +99,7 @@ export async function deleteReview(
 
 export async function deleteReviewByUser(
   userId: string,
-  token: string
+  token: string,
 ): Promise<void> {
   const res = await fetch(`${API_URL}/user/${userId}`, {
     method: "DELETE",
@@ -108,6 +108,24 @@ export async function deleteReviewByUser(
     },
   });
 
+  if (!res.ok) {
+    const err = await safeParseError(res);
+    throw new Error(err);
+  }
+}
+
+export async function deleteManyReviewsByManyUser(
+  userIds: string[],
+  token: string,
+): Promise<void> {
+  const res = await fetch(`${API_URL}/user/multiple`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ ids: userIds }),
+  });
   if (!res.ok) {
     const err = await safeParseError(res);
     throw new Error(err);

@@ -26,7 +26,7 @@ export async function createExam(userId: string, token: string): Promise<Exam> {
 export async function saveAnswer(
   examId: string,
   dto: SaveAnswerDto,
-  token: string
+  token: string,
 ): Promise<Exam> {
   const res = await fetch(`${API_URL}/${examId}/answer`, {
     method: "POST",
@@ -66,7 +66,7 @@ export async function finishExam(examId: string, token: string): Promise<Exam> {
 // Obtener resultado de examen
 export async function getExamResult(
   examId: string,
-  token: string
+  token: string,
 ): Promise<ExamResult> {
   const res = await fetch(`${API_URL}/${examId}/result`, {
     headers: {
@@ -99,7 +99,7 @@ export async function getUserExamHistory(
   userId: string,
   page: number,
   limit: number,
-  token: string
+  token: string,
 ) {
   const res = await fetch(
     `${API_URL}/history/${userId}?page=${page}&limit=${limit}`,
@@ -107,7 +107,7 @@ export async function getUserExamHistory(
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   if (!res.ok) {
@@ -134,7 +134,7 @@ export async function deleteExam(examId: string, token: string): Promise<void> {
 
 export async function deleteAllExamsOfUser(
   userId: string,
-  token: string
+  token: string,
 ): Promise<void> {
   const res = await fetch(`${API_URL}/user/${userId}`, {
     method: "DELETE",
@@ -143,6 +143,24 @@ export async function deleteAllExamsOfUser(
     },
   });
 
+  if (!res.ok) {
+    const err = await safeParseError(res);
+    throw new Error(err);
+  }
+}
+
+export async function deleteManyExamsByManyUser(
+  userIds: string[],
+  token: string,
+): Promise<void> {
+  const res = await fetch(`${API_URL}/user/multiple`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ ids: userIds }),
+  });
   if (!res.ok) {
     const err = await safeParseError(res);
     throw new Error(err);
