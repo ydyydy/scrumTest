@@ -72,7 +72,7 @@ export function Ranking() {
           <tr>
             <th></th>
             <th>Usuario</th>
-            <th>Puntuación</th>
+            <th>Nota(máx 100)</th>
             <th>Duración</th>
           </tr>
         </thead>
