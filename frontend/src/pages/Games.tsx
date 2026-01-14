@@ -62,6 +62,14 @@ export function Games() {
         );
         return;
       }
+      const userPoints = await getUserProfile(user!.sub.value, token!);
+      if ((userPoints.points ?? 0) < 50) {
+        setErrorModalMessage(
+          "No tienes suficientes puntos (mínimo 50) para iniciar un examen."
+        );
+        return;
+      }
+
       navigate("/games/exam");
     } catch (error) {
       console.error(error);

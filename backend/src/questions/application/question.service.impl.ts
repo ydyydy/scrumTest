@@ -53,10 +53,12 @@ export class QuestionServiceImpl implements QuestionService {
   }
 
   async delete(id: string): Promise<void> {
+    await this.reviewRepository.removeQuestionFromReviews(id);
     await this.questionRepository.delete(id);
   }
 
   async deleteMany(ids: string[]): Promise<void> {
+    await this.reviewRepository.removeManyQuestionsFromReviews(ids);
     await this.questionRepository.deleteMany(ids);
   }
 

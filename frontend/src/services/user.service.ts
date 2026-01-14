@@ -128,3 +128,11 @@ export async function deleteManyUsers(
     throw new Error(err);
   }
 }
+
+export async function getUserPoints(
+  id: string,
+  token: string,
+): Promise<number> {
+  const user = await getUserProfile(id, token);
+  return user.points;
+}

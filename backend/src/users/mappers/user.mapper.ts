@@ -2,6 +2,7 @@ import { UniqueEntityID } from '../../../common/core/UniqueEntityID';
 import * as Domain from '../domain';
 import { UserPassword } from '../domain/Password';
 import * as Persistence from '../infra/persistence';
+import { INITIAL_USER_POINTS } from '../../../common/utils/Constants';
 
 export class UserMapper {
   static toDomain(raw: Persistence.User): Domain.User {
@@ -11,7 +12,7 @@ export class UserMapper {
         username: raw.username,
         password: UserPassword.fromHashedPassword(raw.password),
         isAdmin: raw.isAdmin,
-        points: raw.points || 100,
+        points: raw.points ?? INITIAL_USER_POINTS,
       },
       new UniqueEntityID(raw.id),
     );

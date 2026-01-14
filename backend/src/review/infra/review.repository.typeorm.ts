@@ -84,6 +84,53 @@ export class ReviewRepositoryTypeOrm extends ReviewRepository {
     );
   }
 
+  async removeQuestionFromReviews(questionId: string): Promise<void> {
+    // Obtener todos los reviews existentes (persistencia)
+    const reviewsPersistence = await this.reviewRepository.find();
+
+    await Promise.all(
+      reviewsPersistence.map(async (reviewPersistence) => {
+        // Convertir a dominio
+        const reviewDomain = ReviewMapper.toDomain(reviewPersistence);
+
+        // Buscar si existe la pregunta
+        const exists = reviewDomain.content.questions.some(
+          (q) => q.questionId === questionId,
+        );
+        if (!exists) return;
+
+        // Eliminar la pregunta
+        reviewDomain.content.questions = reviewDomain.content.questions.filter(
+          (q) => q.questionId !== questionId,
+        );
+
+        // Guardar cambios
+        await this.updateReview(reviewDomain);
+      }),
+    );
+  }
+
+  async removeManyQuestionsFromReviews(questionIds: string[]): Promise<void> {
+    const reviewsPersistence = await this.reviewRepository.find();
+
+    await Promise.all(
+      reviewsPersistence.map(async (reviewPersistence) => {
+        const reviewDomain = ReviewMapper.toDomain(reviewPersistence);
+
+        const originalLength = reviewDomain.content.questions.length;
+
+        reviewDomain.content.questions = reviewDomain.content.questions.filter(
+          (q) => !questionIds.includes(q.questionId),
+        );
+
+        // Si no cambió nada, no guardamos
+        if (reviewDomain.content.questions.length === originalLength) return;
+
+        await this.updateReview(reviewDomain);
+      }),
+    );
+  }
+
   async delete(id: string): Promise<void> {
     await this.reviewRepository.delete(id);
   }

@@ -27,6 +27,14 @@ export class Exam {
       userAnswerIds?: string[];
       isCorrect?: boolean;
       answered?: boolean;
+      snapshot?: {
+        text: string;
+        answers: Array<{
+          id: string;
+          text: string;
+          isCorrect: boolean;
+        }>;
+      };
     }>;
   };
 }

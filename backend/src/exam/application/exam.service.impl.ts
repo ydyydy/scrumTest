@@ -48,6 +48,9 @@ export class ExamServiceImpl implements ExamService {
 
     // Quitar 50 puntos
     user.points -= EXAM_COST_IN_POINTS;
+    console.log(
+      `Deducted ${EXAM_COST_IN_POINTS} points from user ${user.id}. New balance: ${user.points} points.`,
+    );
     await this.userRepository.save(user);
 
     const questionsByCategory: Record<string, typeof allQuestions> = {};
@@ -77,7 +80,7 @@ export class ExamServiceImpl implements ExamService {
     );
     selectedQuestions.push(...shuffledRemaining.slice(0, remainingCount));
 
-    // Generar el content del examen
+    // Generar el content del examen (incluyendo un snapshot de la pregunta)
     const content: ExamContent = {
       questions: selectedQuestions.map(
         (q): ExamQuestion => ({
@@ -85,6 +88,14 @@ export class ExamServiceImpl implements ExamService {
           userAnswerIds: [],
           isCorrect: undefined,
           answered: false,
+          snapshot: {
+            text: q.text,
+            answers: q.answers.map((a) => ({
+              id: a.id.toString(),
+              text: a.text,
+              isCorrect: a.isCorrect,
+            })),
+          },
         }),
       ),
     };
@@ -139,18 +150,25 @@ export class ExamServiceImpl implements ExamService {
       (now.getTime() - exam.startDate.getTime()) / 1000,
     );
 
-    // Evaluar cada pregunta
+    // Evaluar cada pregunta (usar snapshot si está disponible)
     const results = await Promise.all(
       exam.content.questions.map(async (q) => {
-        const question = await this.questionRepository.findById(q.questionId);
-        if (!question) {
-          // Si no se encuentra la pregunta, marcar como incorrecta
-          return { ...q, isCorrect: false, answered: false };
-        }
+        let correctAnswerIds: string[] = [];
 
-        const correctAnswerIds = question.answers
-          .filter((a) => a.isCorrect)
-          .map((a) => a.id.toString());
+        if (q.snapshot && q.snapshot.answers) {
+          correctAnswerIds = q.snapshot.answers
+            .filter((a) => a.isCorrect)
+            .map((a) => a.id);
+        } else {
+          const question = await this.questionRepository.findById(q.questionId);
+          if (!question) {
+            return { ...q, isCorrect: false, answered: false };
+          }
+
+          correctAnswerIds = question.answers
+            .filter((a) => a.isCorrect)
+            .map((a) => a.id.toString());
+        }
 
         const userAnswers = q.userAnswerIds ?? [];
 
@@ -175,11 +193,13 @@ export class ExamServiceImpl implements ExamService {
     if (exam.score >= 90) {
       const user = await this.userRepository.findById(exam.userId);
       if (!user) throw new NotFoundException('User not found');
+      console.log(`User ${user.id} now has ${user.points} points.`);
 
       user.points = (user.points ?? 0) + EXAM_BONUS_POINTS;
+      console.log(`User ${user.id} now has ${user.points} points.`);
+
       await this.userRepository.save(user);
     }
-
     return this.examRepository.update(exam);
   }
 
@@ -189,22 +209,33 @@ export class ExamServiceImpl implements ExamService {
 
     const questionsResult: ExamResultQuestionDto[] = await Promise.all(
       exam.content.questions.map(async (q) => {
-        const questionData = await this.questionRepository.findById(
-          q.questionId,
-        );
-        if (!questionData)
-          throw new NotFoundException(`Question ${q.questionId} not found`);
+        // Prefer snapshot, fallback to fetching the question; if missing, return a placeholder
+        let text = 'Pregunta eliminada';
+        let answers: ExamResultAnswerDto[] = [];
 
-        const answers: ExamResultAnswerDto[] = questionData.answers.map(
-          (a) => ({
-            id: a.id.toString(),
-            text: a.text,
-          }),
-        );
+        if (q.snapshot) {
+          text = q.snapshot.text;
+          answers = q.snapshot.answers.map((a) => ({ id: a.id, text: a.text }));
+        } else {
+          try {
+            const questionData = await this.questionRepository.findById(
+              q.questionId,
+            );
+            if (questionData) {
+              text = questionData.text;
+              answers = questionData.answers.map((a) => ({
+                id: a.id.toString(),
+                text: a.text,
+              }));
+            }
+          } catch {
+            // If the question is truly missing, keep placeholder text
+          }
+        }
 
         return {
           questionId: q.questionId,
-          text: questionData.text,
+          text,
           answers,
           userAnswerIds: q.userAnswerIds ?? [],
           isCorrect: q.isCorrect ?? false,

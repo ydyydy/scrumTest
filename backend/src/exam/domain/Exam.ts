@@ -6,6 +6,14 @@ export interface ExamQuestion {
   userAnswerIds?: string[];
   isCorrect?: boolean;
   answered?: boolean;
+  snapshot?: {
+    text: string;
+    answers: Array<{
+      id: string;
+      text: string;
+      isCorrect: boolean;
+    }>;
+  };
 }
 
 export interface ExamContent {
